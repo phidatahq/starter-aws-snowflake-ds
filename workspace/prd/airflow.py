@@ -116,7 +116,7 @@ prd_airflow_redis = Redis(
 
 # Airflow webserver
 prd_airflow_ws = AirflowWebserver(
-    replicas=3,
+    replicas=5,
     enabled=airflow_enabled,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
@@ -145,7 +145,7 @@ prd_airflow_ws = AirflowWebserver(
 
 # Airflow scheduler
 prd_airflow_scheduler = AirflowScheduler(
-    replicas=3,
+    replicas=5,
     enabled=airflow_enabled,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
@@ -178,7 +178,7 @@ prd_airflow_scheduler = AirflowScheduler(
 
 # Airflow worker queue
 prd_airflow_worker = AirflowWorker(
-    replicas=3,
+    replicas=4,
     enabled=airflow_enabled,
     queue_name="default,tier_1",
     image_name=prd_airflow_image.name,

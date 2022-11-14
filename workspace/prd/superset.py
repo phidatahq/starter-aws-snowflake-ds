@@ -96,7 +96,7 @@ prd_superset_redis = Redis(
 
 # Superset webserver
 prd_superset_ws = SupersetWebserver(
-    replicas=3,
+    replicas=5,
     enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
