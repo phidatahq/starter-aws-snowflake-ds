@@ -1,11 +1,10 @@
+from phidata.infra.aws.resource.acm.certificate import AcmCertificate
 from phidata.infra.aws.resource.eks.cluster import EksCluster
 from phidata.infra.aws.resource.eks.kubeconfig import EksKubeconfig
 from phidata.infra.aws.resource.eks.node_group import EksNodeGroup
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.s3.bucket import S3Bucket
-
-# from phidata.infra.aws.resource.acm.certificate import AcmCertificate
-# from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
+from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
 
 from workspace.settings import (
     prd_domain,
@@ -40,13 +39,12 @@ prd_data_s3_bucket = S3Bucket(
 )
 
 # -*- VPC stack for EKS
-# Uncomment to create a VPC stack for EKS
-# prd_vpc_stack = CloudFormationStack(
-#     name=f"{prd_key}-vpc",
-#     template_url="https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml",
-#     tags=prd_tags,
-#     skip_delete=aws_skip_delete,
-# )
+prd_vpc_stack = CloudFormationStack(
+    name=f"{prd_key}-vpc",
+    template_url="https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml",
+    tags=prd_tags,
+    skip_delete=aws_skip_delete,
+)
 
 # -*- EKS cluster
 prd_eks_cluster = EksCluster(
@@ -72,7 +70,7 @@ prd_services_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5.xlarge"],
+    instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
     # Add the services label to the nodegroup
     labels=services_ng_label,
@@ -87,7 +85,7 @@ prd_worker_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5.xlarge"],
+    instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
     # Add the workers label to the nodegroup
     labels=workers_ng_label,
@@ -96,15 +94,14 @@ prd_worker_eks_nodegroup = EksNodeGroup(
 )
 
 # -*- ACM certificate for domain
-# Uncomment to create an ACM certificate for domain
-# prd_aws_dp_certificate = AcmCertificate(
-#     name=prd_domain,
-#     domain_name=prd_domain,
-#     subject_alternative_names=[f"*.{prd_domain}"],
-#     store_cert_summary=True,
-#     certificate_summary_file=ws_dir_path.joinpath("aws", "acm", prd_domain),
-#     skip_delete=aws_skip_delete,
-# )
+prd_aws_dp_certificate = AcmCertificate(
+    name=prd_domain,
+    domain_name=prd_domain,
+    subject_alternative_names=[f"*.{prd_domain}"],
+    store_cert_summary=True,
+    certificate_summary_file=ws_dir_path.joinpath("aws", "acm", prd_domain),
+    skip_delete=aws_skip_delete,
+)
 
 prd_aws_resources = AwsResourceGroup(
     name=prd_key,
@@ -112,6 +109,8 @@ prd_aws_resources = AwsResourceGroup(
     eks_cluster=prd_eks_cluster,
     eks_kubeconfig=prd_eks_kubeconfig,
     eks_nodegroups=[prd_services_eks_nodegroup, prd_worker_eks_nodegroup],
+    # Uncomment to create a VPC cloudformation stack
     # cloudformation_stacks=[prd_vpc_stack],
+    # Uncomment to create an ACM certificate for domain
     # acm_certificates=[prd_aws_dp_certificate],
 )

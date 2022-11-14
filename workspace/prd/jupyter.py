@@ -1,4 +1,4 @@
-from phidata.app.jupyter import JupyterLab, ImagePullPolicy, ServiceType
+from phidata.app.jupyter import JupyterLab
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
 
@@ -43,7 +43,6 @@ prd_jupyter = JupyterLab(
     enabled=jupyter_enabled,
     image_name=prd_jupyter_image.name,
     image_tag=prd_jupyter_image.tag,
-    image_pull_policy=ImagePullPolicy.ALWAYS,
     mount_ebs_volume=True,
     ebs_volume=prd_jupyter_ebs_volume,
     # mounted when creating the image

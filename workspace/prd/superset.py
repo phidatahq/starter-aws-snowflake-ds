@@ -10,7 +10,6 @@ from phidata.app.superset import (
 )
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
-from phidata.infra.k8s.enums.image_pull_policy import ImagePullPolicy
 
 from workspace.prd.images import prd_superset_image
 from workspace.settings import (

@@ -1,6 +1,6 @@
 from phidata.app.traefik import IngressRoute, ServiceType
 
-# from workspace.prd.aws_resources import prd_aws_dp_certificate
+from workspace.prd.aws_resources import prd_aws_dp_certificate
 from workspace.prd.airflow import prd_airflow_ws, prd_airflow_flower
 from workspace.prd.superset import prd_superset_ws
 from workspace.prd.jupyter import prd_jupyter
