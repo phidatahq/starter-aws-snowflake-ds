@@ -112,7 +112,7 @@ traefik_ingress_route = IngressRoute(
         "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": "ip",
         # To make the load balancer internal. Set internal = "true"
         # reference: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
-        # "service.beta.kubernetes.io/aws-load-balancer-internal": "true",
+        "service.beta.kubernetes.io/aws-load-balancer-internal": "true",
         # Other annotations: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/service/annotations/#annotations
     },
     # Enable traefik dashboard
