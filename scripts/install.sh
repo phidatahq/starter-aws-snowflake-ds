@@ -12,24 +12,24 @@
 ############################################################################
 
 CURR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$( dirname $CURR_DIR )"
+REPO_ROOT="$( dirname $CURR_DIR )"
 source ${CURR_DIR}/_utils.sh
 
 main() {
-  print_heading "Installing workspace: ${ROOT_DIR}"
+  print_heading "Installing workspace: ${REPO_ROOT}"
 
   pip install --upgrade wheel
 
   print_heading "Installing requirements.txt"
   pip install --no-deps \
-    -r ${ROOT_DIR}/requirements.txt
+    -r ${REPO_ROOT}/requirements.txt
 
-  print_heading "Installing workspace ${ROOT_DIR} with [dev] extras"
-  pip install --editable "${ROOT_DIR}[dev]"
+  print_heading "Installing workspace ${REPO_ROOT} with [dev] extras"
+  pip install --editable "${REPO_ROOT}[dev]"
 
   # print_heading "Installing airflow requirements without dependencies for code completion"
   # pip install --no-deps \
-  #   -r ${ROOT_DIR}/workspace/dev/airflow_resources/requirements-airflow.txt
+  #   -r ${REPO_ROOT}/workspace/dev/airflow_resources/requirements-airflow.txt
 }
 
 main "$@"

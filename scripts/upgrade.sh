@@ -16,7 +16,7 @@
 ############################################################################
 
 CURR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$( dirname $CURR_DIR )"
+REPO_ROOT="$( dirname $CURR_DIR )"
 source ${CURR_DIR}/_utils.sh
 
 main() {
@@ -26,25 +26,25 @@ main() {
     UPGRADE_ALL=1
   fi
 
-  print_heading "Upgrading dependencies for workspace: ${ROOT_DIR}"
+  print_heading "Upgrading dependencies for workspace: ${REPO_ROOT}"
   print_heading "Installing pip & pip-tools"
   python -m pip install --upgrade pip pip-tools
 
-  cd ${ROOT_DIR}
+  cd ${REPO_ROOT}
   if [[ UPGRADE_ALL -eq 1 ]];
   then
     print_heading "Upgrading all dependencies to latest version"
     CUSTOM_COMPILE_COMMAND="./scripts/upgrade.sh" \
       pip-compile --upgrade --no-annotate --pip-args "--no-cache-dir" \
-      -o ${ROOT_DIR}/requirements.txt \
-      ${ROOT_DIR}/pyproject.toml
+      -o ${REPO_ROOT}/requirements.txt \
+      ${REPO_ROOT}/pyproject.toml
     print_horizontal_line
   else
     print_heading "Updating requirements.txt"
     CUSTOM_COMPILE_COMMAND="./scripts/upgrade.sh" \
       pip-compile --no-annotate --pip-args "--no-cache-dir" \
-      -o ${ROOT_DIR}/requirements.txt \
-      ${ROOT_DIR}/pyproject.toml
+      -o ${REPO_ROOT}/requirements.txt \
+      ${REPO_ROOT}/pyproject.toml
     print_horizontal_line
   fi
 }

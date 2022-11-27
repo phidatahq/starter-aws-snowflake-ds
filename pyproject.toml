@@ -8,21 +8,19 @@ authors = [
 ]
 
 dependencies = [
-    "boto3",
-    "pandas",
-    "phidata>=0.3.9",
-    "requests",
-    "selenium",
-    "sqlalchemy",
-    "numpy",
-    "openpyxl",
-    "tabula-py",
-    "scikit-learn",
-    "xgboost",
-    "seaborn",
     "matplotlib",
-    "scipy",
+    "numpy",
+    "pandas",
+    "phidata[aws]>=0.3.11",
     "prophet",
+    "requests",
+    "scikit-learn",
+    "scipy",
+    "seaborn",
+    "selenium",
+    "snowflake-sqlalchemy",
+    "sqlalchemy",
+    "xgboost",
 ]
 
 [project.optional-dependencies]
