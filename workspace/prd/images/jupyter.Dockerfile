@@ -1,4 +1,4 @@
-FROM phidata/jupyterlab:3.4.8
+FROM phidata/jupyterlab:3.4.8-r
 
 RUN pip install --upgrade pip
 

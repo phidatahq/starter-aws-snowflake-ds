@@ -59,7 +59,7 @@ aws_az: str = "us-east-1a"
 # -*- EKS settings
 #
 # Production Subnets to use with the EKS cluster
-prd_subnets: List[str] = ["subnet-005b6a764e3ab8a19", "subnet-0175392d110949300"]
+prd_subnets: List[str] = ["subnet-0c2587701e140e69e", "subnet-0964a2e70b7289ee5"]
 
 # Node Group label for Services
 services_ng_label = {
