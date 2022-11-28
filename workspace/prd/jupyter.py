@@ -1,4 +1,4 @@
-from phidata.app.jupyter import JupyterLab
+from phidata.app.jupyter import JupyterLab, ImagePullPolicy
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
 
@@ -51,6 +51,7 @@ prd_jupyter = JupyterLab(
     env_file=ws_dir_path.joinpath("env/prd_jupyter_env.yml"),
     # Read secrets from secrets/prd_jupyter_secrets.yml
     secrets_file=ws_dir_path.joinpath("secrets/prd_jupyter_secrets.yml"),
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=workers_ng_label,
     topology_spread_key=topology_spread_key,

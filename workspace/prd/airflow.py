@@ -6,6 +6,7 @@ from phidata.app.airflow import (
     AirflowScheduler,
     AirflowWorker,
     AirflowFlower,
+    ImagePullPolicy,
 )
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
@@ -141,6 +142,7 @@ prd_airflow_ws = AirflowWebserver(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 # Airflow scheduler
@@ -174,6 +176,7 @@ prd_airflow_scheduler = AirflowScheduler(
     upgrade_airflow_db=True,
     # Creates airflow user: admin, pass: admin -- mark as false after first run
     create_airflow_admin_user=True,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 # Airflow worker queue
@@ -204,6 +207,7 @@ prd_airflow_worker = AirflowWorker(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 
@@ -234,6 +238,7 @@ prd_airflow_flower = AirflowFlower(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 prd_airflow_apps = [
