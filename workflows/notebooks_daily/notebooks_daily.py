@@ -14,7 +14,7 @@ default_task_args = {
     "email": EMAILS,
     "email_on_failure": True,
     "email_on_retry": False,
-    "retries": 3,
+    "retries": 1,
 }
 
 notebooks_daily_dir = Path(__file__).parent
@@ -29,9 +29,16 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    test_notebook = PapermillOperator(
-        task_id="test_notebook",
+    test_nb = PapermillOperator(
+        task_id="test_nb",
         input_nb=str(notebooks_dir.joinpath("examples", "test_nb.ipynb")),
         output_nb="/tmp/test_nb_{{ execution_date }}.ipynb",
+        parameters={"msg": "Ran from Airflow at {{ execution_date }}!"},
+    )
+
+    snowflake_nb = PapermillOperator(
+        task_id="snowflake_nb",
+        input_nb=str(notebooks_dir.joinpath("examples", "snowflake_nb.ipynb")),
+        output_nb="/tmp/snowflake_nb_{{ execution_date }}.ipynb",
         parameters={"msg": "Ran from Airflow at {{ execution_date }}!"},
     )
