@@ -9,3 +9,6 @@ COPY workspace/prd/airflow_resources/requirements-airflow.txt /
 RUN pip install -r /requirements-airflow.txt
 
 COPY workspace/prd/airflow_resources/webserver_config.py ${AIRFLOW_HOME}/
+
+# Install python3 kernel for jupyter
+RUN ipython kernel install --name "python3"

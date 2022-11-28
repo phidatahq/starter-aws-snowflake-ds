@@ -7,3 +7,6 @@ RUN pip install -r /requirements.txt
 
 COPY workspace/dev/airflow_resources /
 RUN pip install -r /requirements-airflow.txt
+
+# Install python3 kernel for jupyter
+RUN ipython kernel install --name "python3"

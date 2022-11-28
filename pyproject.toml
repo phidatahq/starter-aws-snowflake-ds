@@ -18,7 +18,7 @@ dependencies = [
     "scipy",
     "seaborn",
     "selenium",
-    "snowflake-sqlalchemy",
+    "snowflake-sqlalchemy[pandas]",
     "sqlalchemy",
     "xgboost",
 ]
