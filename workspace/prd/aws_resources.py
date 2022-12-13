@@ -66,9 +66,9 @@ prd_eks_kubeconfig = EksKubeconfig(eks_cluster=prd_eks_cluster)
 # -*- EKS cluster nodegroup for running core services
 prd_services_eks_nodegroup = EksNodeGroup(
     name=f"{prd_key}-services-ng",
-    min_size=1,
+    min_size=2,
     max_size=5,
-    desired_size=1,
+    desired_size=2,
     disk_size=64,
     instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
@@ -81,9 +81,9 @@ prd_services_eks_nodegroup = EksNodeGroup(
 # -*- EKS cluster nodegroup for running worker services
 prd_worker_eks_nodegroup = EksNodeGroup(
     name=f"{prd_key}-workers-ng",
-    min_size=1,
+    min_size=2,
     max_size=5,
-    desired_size=1,
+    desired_size=2,
     disk_size=64,
     instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
