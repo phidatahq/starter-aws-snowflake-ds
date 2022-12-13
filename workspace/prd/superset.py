@@ -96,7 +96,7 @@ prd_superset_redis = Redis(
 
 # Superset webserver
 prd_superset_ws = SupersetWebserver(
-    replicas=5,
+    replicas=2,
     enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
@@ -142,7 +142,7 @@ prd_superset_init = SupersetInit(
 
 # Superset worker
 prd_superset_worker = SupersetWorker(
-    replicas=2,
+    replicas=1,
     enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
@@ -165,7 +165,7 @@ prd_superset_worker = SupersetWorker(
 
 # Superset worker beat
 prd_superset_worker_beat = SupersetWorkerBeat(
-    replicas=2,
+    replicas=1,
     enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
