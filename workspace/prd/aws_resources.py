@@ -70,7 +70,7 @@ prd_services_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5.large"],
+    instance_types=["m5a.large"],
     eks_cluster=prd_eks_cluster,
     # Add the services label to the nodegroup
     labels=services_ng_label,
@@ -85,7 +85,7 @@ prd_worker_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5.large"],
+    instance_types=["m5a.large"],
     eks_cluster=prd_eks_cluster,
     # Add the workers label to the nodegroup
     labels=workers_ng_label,

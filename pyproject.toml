@@ -11,7 +11,7 @@ dependencies = [
     "matplotlib",
     "numpy",
     "pandas",
-    "phidata>=0.4.1",
+    "phidata>=0.4.5",
     "prophet",
     "requests",
     "scikit-learn",
