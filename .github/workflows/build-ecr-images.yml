@@ -7,10 +7,6 @@ on:
 permissions:
   contents: read
 
-env:
-  IMAGE_TAG: prd
-  IMAGE_SUFFIX: starter-aws-snowflake-ds
-
 jobs:
   build-airflow-prd:
 
@@ -44,7 +40,7 @@ jobs:
           file: workspace/prd/images/airflow.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/airflow-$IMAGE_SUFFIX:$IMAGE_TAG
+          tags: ${{ steps.login-ecr.outputs.registry }}/airflow-starter-aws-snowflake-ds:prd
 
   build-superset-prd:
 
@@ -78,7 +74,7 @@ jobs:
           file: workspace/prd/images/superset.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/superset-$IMAGE_SUFFIX:$IMAGE_TAG
+          tags: ${{ steps.login-ecr.outputs.registry }}/superset-starter-aws-snowflake-ds:prd
 
   build-jupyter-prd:
 
@@ -112,4 +108,4 @@ jobs:
           file: workspace/prd/images/jupyter.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/jupyter-$IMAGE_SUFFIX:$IMAGE_TAG
+          tags: ${{ steps.login-ecr.outputs.registry }}/jupyter-starter-aws-snowflake-ds:prd
