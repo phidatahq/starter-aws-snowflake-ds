@@ -42,8 +42,8 @@ OAUTH_PROVIDERS = [
         "icon": "fa-google",
         "token_key": "access_token",
         "remote_app": {
-            "client_id": os.getenv("AIRFLOW__GOOGLE__CLIENT_ID"),
-            "client_secret": os.getenv("AIRFLOW__GOOGLE__CLIENT_SECRET"),
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
             "api_base_url": "https://www.googleapis.com/oauth2/v2/",
             "client_kwargs": {"scope": "email profile"},
             "request_token_url": None,
@@ -51,7 +51,7 @@ OAUTH_PROVIDERS = [
             "authorize_url": "https://accounts.google.com/o/oauth2/auth",
             "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
         },
-        "whitelist": ["@{}".format(os.getenv("AIRFLOW__GOOGLE__DOMAIN"))],
+        "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
     }
 ]
 
@@ -78,7 +78,7 @@ OAUTH_PROVIDERS = [
 # APP_THEME = "simplex.css"
 # APP_THEME = "slate.css"
 # APP_THEME = "solar.css"
-APP_THEME = "spacelab.css"
+# APP_THEME = "spacelab.css"
 # APP_THEME = "superhero.css"
 # APP_THEME = "united.css"
 # APP_THEME = "yeti.css"

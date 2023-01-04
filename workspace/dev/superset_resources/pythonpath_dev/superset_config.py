@@ -124,7 +124,7 @@ AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
 AUTH_USER_REGISTRATION = True
 # The default user self registration role
-AUTH_USER_REGISTRATION_ROLE = "Public"
+AUTH_USER_REGISTRATION_ROLE = "Alpha"
 # If we should replace ALL the user's roles each login, or only on registration
 AUTH_ROLES_SYNC_AT_LOGIN = True
 
