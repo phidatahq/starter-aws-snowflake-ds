@@ -14,6 +14,7 @@ dependencies = [
     "numpy",
     "pandas",
     "phidata>=0.4.5",
+    "pre-commit",
     "prophet",
     "psycopg2-binary",
     "pytest",
@@ -26,8 +27,8 @@ dependencies = [
     "snowflake-connector-python[pandas]",
     "snowflake-sqlalchemy[pandas]",
     "sqlalchemy",
-    # "types-requests",
     "xgboost",
+    # "types-requests",
 ]
 
 [project.optional-dependencies]
