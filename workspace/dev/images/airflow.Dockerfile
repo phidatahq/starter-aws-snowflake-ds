@@ -5,7 +5,7 @@ RUN pip install --upgrade pip
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
-COPY workspace/dev/airflow_resources /
+COPY workspace/dev/airflow_resources/requirements-airflow.txt /
 RUN pip install -r /requirements-airflow.txt
 
 COPY workspace/dev/airflow_resources/webserver_config.py ${AIRFLOW_HOME}/

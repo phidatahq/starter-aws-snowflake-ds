@@ -1,8 +1,3 @@
-"""
-SUPERSET CONFIGURATION
-https://superset.apache.org/docs/installation/configuring-superset
-"""
-
 import os
 import logging
 from typing import Optional
@@ -119,27 +114,29 @@ DATA_CACHE_CONFIG = {
 
 # ----------------------------------------------------
 # AUTHENTICATION CONFIG
+# http://flask-appbuilder.readthedocs.io/en/latest/security.html#authentication-methods
 # ----------------------------------------------------
 # Use OAUTH i.e. Google, Facebook, GitHub authentication
 AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
 AUTH_USER_REGISTRATION = True
 # The default user self registration role
+# This role will be given in addition to any AUTH_ROLES_MAPPING
 AUTH_USER_REGISTRATION_ROLE = "Public"
 # If we should replace ALL the user's roles each login, or only on registration
 AUTH_ROLES_SYNC_AT_LOGIN = True
+# A mapping from the values of `userinfo["role_keys"]` to a list of FAB roles
 AUTH_ROLES_MAPPING = {
     "Alpha": ["Alpha"],
     "Admin": ["Admin"],
 }
 
 # Grant public role the same set of permissions as for a selected builtin role.
-# This is useful if one wants to enable anonymous users to view
-# dashboards. Explicit grant on specific datasets is still required.
+# This is use to enable anonymous users to view dashboards. Explicit grant on specific datasets is still required.
 # https://superset.apache.org/docs/security/#public
 PUBLIC_ROLE_LIKE = "Gamma"
 
-# Enable Google OAuth
+# Enable Google and Github OAuth
 OAUTH_PROVIDERS = [
     {
         "name": "google",
@@ -176,7 +173,7 @@ OAUTH_PROVIDERS = [
 CUSTOM_SECURITY_MANAGER = CustomSsoSecurityManager
 
 # ----------------------------------------------------
-# EXTRA CONFIG OPTIONS
+# ADDITIONAL CONFIGURATION
 # ----------------------------------------------------
 ROW_LIMIT = 5000
 # Enable Flask-WTF flag for CSRF

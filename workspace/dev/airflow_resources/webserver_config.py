@@ -6,8 +6,6 @@ from airflow.configuration import conf
 from airflow.www.fab_security.manager import AUTH_DB, AUTH_OAUTH
 from airflow.www.security import AirflowSecurityManager
 
-log = logging.getLogger(__name__)
-log.setLevel(os.getenv("AIRFLOW__LOGGING__FAB_LOGGING_LEVEL", "INFO"))
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Enable Flask-WTF flag for CSRF
@@ -22,7 +20,6 @@ SQLALCHEMY_DATABASE_URI = conf.get("database", "SQL_ALCHEMY_CONN")
 # ----------------------------------------------------
 # For details on how to set up each of the following authentication, see
 # http://flask-appbuilder.readthedocs.io/en/latest/security.html#authentication-methods
-# for details.
 
 # The authentication types
 # AUTH_OID : Is for OpenID
@@ -36,16 +33,19 @@ AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
 AUTH_USER_REGISTRATION = True
 # The default user self registration role
-AUTH_USER_REGISTRATION_ROLE = "Viewer"
+# This role will be given in addition to any AUTH_ROLES_MAPPING
+AUTH_USER_REGISTRATION_ROLE = "Public"
 # If we should replace ALL the user's roles each login, or only on registration
 AUTH_ROLES_SYNC_AT_LOGIN = True
+# Use the OauthAuthorizer class to authorize user roles
 FAB_SECURITY_MANAGER_CLASS = "webserver_config.OauthAuthorizer"
+# A mapping from the values of `userinfo["role_keys"]` to a list of FAB roles
 AUTH_ROLES_MAPPING = {
     "User": ["User"],
     "Admin": ["Admin"],
 }
 
-# Enable Google OAuth
+# Enable Google and Github OAuth
 OAUTH_PROVIDERS = [
     {
         "name": "google",
@@ -80,31 +80,46 @@ OAUTH_PROVIDERS = [
 ]
 
 
-def email_to_role_keys(email: str) -> List[str]:
-    """Maps an email to role_keys"""
+def get_roles_for_email(email: str) -> List[str]:
+    """Returns a list of roles for an email.
+    When a user logs in using Google, the email is used to determine their role.
+    This is useful for granting admin access to specific users.
+    All other users will be granted the "User" role.
+    """
+
     ADMIN_EMAILS = ["ashpreet@phidata.com"]
     if email in ADMIN_EMAILS:
-        log.info(f"User {email} is an Admin")
         return ["Admin"]
     else:
         return ["User"]
 
 
-def github_team_parser(team_payload):
-    # Parse the team payload from GitHub
-    log.info(f"Team payload: {team_payload}")
-    return [team["id"] for team in team_payload]
+def get_roles_for_gh_team(team_payload: List[dict]) -> List[str]:
+    """Returns a list of roles for a github team.
+    When a user logs in using GitHub, the team payload is used to determine their role.
+    This is useful for granting admin access to specific teams and user access to other teams.
+    All other users will be granted the "Public" role.
 
+    The team payload is a list of dicts with the following keys:
+    - id: int
+    - name: str
+    - slug: str
+    - privacy: str
+    - organization: dict
+    - url: str
+    - html_url: str
+    """
 
-def github_map_roles(team_list):
-    # Associate the team IDs with Roles here.
-    # The expected output is a list of roles that FAB will use to Authorize the user.
+    ADMIN_TEAM_SLUGS = ["data-platform-admins"]
+    USER_TEAM_SLUGS = ["data-platform-users"]
 
-    team_role_map = {
-        "data-platform-admins": "Admin",
-        "data-platform-users": "User",
-    }
-    return list(set(team_role_map.get(team, "Viewer") for team in team_list))
+    team_slugs = [team["slug"] for team in team_payload]
+    if any(team_slug in ADMIN_TEAM_SLUGS for team_slug in team_slugs):
+        return ["Admin"]
+    elif any(team_slug in USER_TEAM_SLUGS for team_slug in team_slugs):
+        return ["User"]
+    else:
+        return ["Public"]
 
 
 class OauthAuthorizer(AirflowSecurityManager):
@@ -115,31 +130,33 @@ class OauthAuthorizer(AirflowSecurityManager):
         self, provider: str, resp: Any
     ) -> dict[str, Union[str, list[str]]]:
 
-        log.info(f"Getting user info from {provider}")
-        # log.info(f"Response: {resp}")
+        logging.info(f"Getting user info from {provider}")
 
         if provider == "google":
-            me = self.appbuilder.sm.oauth_remotes[provider].get("userinfo")
-            user_data = me.json()
-            # log.info(f"User info from Google: {user_data}")
+            userinfo = self.appbuilder.sm.oauth_remotes[provider].get("userinfo")
+
+            user_data = userinfo.json()
+            email = user_data.get("email", "")
+            roles = get_roles_for_email(email)
+            logging.info(f"User {email} has roles: {roles}")
             return {
-                "username": "google_" + user_data.get("id", ""),
+                "username": "g_" + user_data.get("id", ""),
                 "first_name": user_data.get("given_name", ""),
                 "last_name": user_data.get("family_name", ""),
-                "email": user_data.get("email", ""),
-                "role_keys": email_to_role_keys(user_data.get("email", "")),
+                "email": email,
+                "role_keys": roles,
             }
+
         elif provider == "github":
             remote_app = self.appbuilder.sm.oauth_remotes[provider]
-            me = remote_app.get("user")
-            user_data = me.json()
-            team_data = remote_app.get("user/teams")
-            teams = github_team_parser(team_data.json())
-            roles = github_map_roles(teams)
-            log.debug(
-                f"User info from Github: {user_data}\nTeam info from Github: {teams}"
-            )
-            return {"username": "github_" + user_data.get("login"), "role_keys": roles}
+
+            user_data = remote_app.get("user").json()
+            team_data = remote_app.get("user/teams").json()
+            login = user_data.get("login")
+            roles = get_roles_for_gh_team(team_data)
+            logging.info(f"User {login} has roles: {roles}")
+            return {"username": "gh_" + login, "role_keys": roles}
+
         else:
             return {}
 
