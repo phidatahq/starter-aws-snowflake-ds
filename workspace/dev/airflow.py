@@ -58,7 +58,7 @@ dev_airflow_env: Dict[str, str] = {
     "AWS_DEFAULT_REGION": aws_region,
     "AIRFLOW_CONN_AWS_DEFAULT": "aws://",
     # Airflow Navbar color
-    "AIRFLOW__WEBSERVER__NAVBAR_COLOR": "#1f77b4",
+    "AIRFLOW__WEBSERVER__NAVBAR_COLOR": "#7dd3fc",
 }
 
 # Airflow webserver
