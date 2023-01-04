@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import List
-from typing_extensions import Literal
 
 from phidata.utils.env_var import env_var_is_true
 
@@ -53,36 +52,18 @@ prd_domain = "starter-aws-snowflake.com"
 # Region to use for AWS resources
 aws_region: str = "us-east-1"
 # Availability Zone for EbsVolumes
-aws_az: str = "us-east-1a"
+aws_az_1a: str = "us-east-1a"
+aws_az_1b: str = "us-east-1b"
+# Production Subnets
+public_subnets: List[str] = ["subnet-0aebed09ea7c82a5f", "subnet-0d53d74c0bb98ac9d"]
+private_subnets: List[str] = [
+    "subnet-0964a2e70b7289ee5",
+    "subnet-0c2587701e140e69e",
+]
 
 #
-# -*- EKS settings
+# -*- Settings from environment variables. Set these in .env file.
 #
-# Production Subnets to use with the EKS cluster
-prd_subnets: List[str] = ["subnet-0c2587701e140e69e", "subnet-0964a2e70b7289ee5"]
-
-# Node Group label for Services
-services_ng_label = {
-    "app_type": "service",
-}
-# Node Group label for Workers
-workers_ng_label = {
-    "app_type": "worker",
-}
-
-# How to distribute pods across EKS nodes
-# "kubernetes.io/hostname" means spread across nodes
-topology_spread_key: str = "kubernetes.io/hostname"
-topology_spread_max_skew: int = 2
-topology_spread_when_unsatisfiable: Literal[
-    "DoNotSchedule", "ScheduleAnyway"
-] = "DoNotSchedule"
-
-#
-# -*- Settings derived using environment variables
-#
-# When env var CACHE=True, phi will skip the create/delete of existing resources.
-# So `CACHE=f phi [command]` can be used to recreate existing resources
-# Example: `CACHE=f phi ws up --env dev --name airflow --type container`
-#           will restart existing airflow containers.
+# By default use_cache=True and `phi` skips creation if a resource with the same name is found.
+# Set use_cache=False to force recreate resources even if they exist.
 use_cache: bool = env_var_is_true("CACHE", True)

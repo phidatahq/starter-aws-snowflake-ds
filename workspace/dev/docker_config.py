@@ -14,6 +14,6 @@ dev_docker_config = DockerConfig(
     network=ws_name,
     apps=dev_pg_db_apps + dev_airflow_apps + dev_jupyter_apps + dev_superset_apps,
     # uncomment the following line to build local images
-    # images=dev_images,
+    images=dev_images,
     resources=[dev_traefik_resources],
 )

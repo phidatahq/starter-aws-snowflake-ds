@@ -1,3 +1,5 @@
+from typing_extensions import Literal
+
 from phidata.infra.aws.resource.acm.certificate import AcmCertificate
 from phidata.infra.aws.resource.eks.cluster import EksCluster
 from phidata.infra.aws.resource.eks.kubeconfig import EksKubeconfig
@@ -9,18 +11,15 @@ from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
 from workspace.settings import (
     prd_domain,
     prd_key,
-    prd_subnets,
+    private_subnets,
     prd_tags,
-    services_ng_label,
-    workers_ng_label,
     ws_dir_path,
 )
 
 # -*- AWS resources
 
-# Shared aws settings
-# skip_delete = True means resources will not be deleted on `phi ws down --env prd`
-# Used in production to prevent accidental deletes
+# When skip_delete = True, resources will not be deleted on `phi ws down --env prd`.
+# Used this setting in production to prevent accidental deletes.
 aws_skip_delete: bool = False
 
 # -*- S3 buckets
@@ -30,7 +29,6 @@ prd_logs_s3_bucket = S3Bucket(
     acl="private",
     skip_delete=aws_skip_delete,
 )
-
 # S3 bucket for storing data
 prd_data_s3_bucket = S3Bucket(
     name=f"{prd_key}-data",
@@ -46,12 +44,29 @@ prd_vpc_stack = CloudFormationStack(
     skip_delete=aws_skip_delete,
 )
 
+# -*- EKS settings
+# Node Group label for Services
+services_ng_label = {
+    "app_type": "service",
+}
+# Node Group label for Workers
+workers_ng_label = {
+    "app_type": "worker",
+}
+# How to distribute pods across EKS nodes
+# "kubernetes.io/hostname" means spread across nodes
+topology_spread_key: str = "kubernetes.io/hostname"
+topology_spread_max_skew: int = 2
+topology_spread_when_unsatisfiable: Literal[
+    "DoNotSchedule", "ScheduleAnyway"
+] = "DoNotSchedule"
+
 # -*- EKS cluster
 prd_eks_cluster = EksCluster(
     name=f"{prd_key}-cluster",
     # Add subnets and security groups.
     resources_vpc_config={
-        "subnetIds": prd_subnets,
+        "subnetIds": private_subnets,
     },
     # To use the prd_vpc_stack from above,
     # uncomment the line below and comment out the resources_vpc_config above
@@ -61,6 +76,8 @@ prd_eks_cluster = EksCluster(
     # Manage kubeconfig separately using an EksKubeconfig resource
     manage_kubeconfig=False,
 )
+
+# -*- EKS Kubeconfig
 prd_eks_kubeconfig = EksKubeconfig(eks_cluster=prd_eks_cluster)
 
 # -*- EKS cluster nodegroup for running core services

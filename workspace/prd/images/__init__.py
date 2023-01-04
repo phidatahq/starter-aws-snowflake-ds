@@ -14,7 +14,7 @@ prd_images = []
 
 # Shared image params
 image_tag = "prd"
-image_repo = "phidata"  # Set your image repo
+image_repo = "386435111151.dkr.ecr.us-east-1.amazonaws.com"  # Set your image repo
 image_suffix = "starter-aws-snowflake-ds"  # Set your image name suffix
 skip_docker_cache = False  # Skip docker cache when building images
 pull_docker_images = False  # Force pull images during FROM

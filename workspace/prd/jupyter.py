@@ -2,17 +2,19 @@ from phidata.app.jupyter import JupyterLab, ImagePullPolicy
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
 
-from workspace.prd.images import prd_jupyter_image
-from workspace.settings import (
-    aws_az,
-    jupyter_enabled,
-    prd_key,
-    prd_tags,
+from workspace.prd.aws_resources import (
     topology_spread_key,
     topology_spread_max_skew,
     topology_spread_when_unsatisfiable,
-    use_cache,
     workers_ng_label,
+)
+from workspace.prd.images import prd_jupyter_image
+from workspace.settings import (
+    aws_az_1a,
+    jupyter_enabled,
+    prd_key,
+    prd_tags,
+    use_cache,
     ws_dir_path,
 )
 
@@ -26,7 +28,7 @@ aws_skip_delete: bool = False
 prd_jupyter_ebs_volume = EbsVolume(
     name=f"jupyter-{prd_key}",
     size=16,
-    availability_zone=aws_az,
+    availability_zone=aws_az_1a,
     tags=prd_tags,
     skip_delete=aws_skip_delete,
 )

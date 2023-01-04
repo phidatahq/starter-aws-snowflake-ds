@@ -2,7 +2,7 @@
 
 ############################################################################
 #
-# Install python dependencies. Please run this inside a virtual env
+# Install python dependencies. Run this inside a virtual env.
 # Usage:
 # 1. Create + activate virtual env using:
 #     python3 -m venv ~/.venvs/dpenv
@@ -24,12 +24,12 @@ main() {
   pip install --no-deps \
     -r ${REPO_ROOT}/requirements.txt
 
-  print_heading "Installing workspace ${REPO_ROOT} with [dev] extras"
-  pip install --editable "${REPO_ROOT}[dev]"
+  print_heading "Installing workspace ${REPO_ROOT}"
+  pip install --editable "${REPO_ROOT}"
 
-  # print_heading "Installing airflow requirements without dependencies for code completion"
-  # pip install --no-deps \
-  #   -r ${REPO_ROOT}/workspace/dev/airflow_resources/requirements-airflow.txt
+  print_heading "Installing airflow requirements without dependencies for code completion"
+  pip install --no-deps \
+    -r ${REPO_ROOT}/workspace/dev/airflow_resources/requirements-airflow.txt
 }
 
 main "$@"

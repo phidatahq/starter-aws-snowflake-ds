@@ -2,14 +2,14 @@
 
 ############################################################################
 #
-# Upgrade python dependencies. Please run this inside a virtual env
+# Upgrade python dependencies. Run this inside a virtual env.
 # Usage:
 # 1. Create + activate virtual env using:
 #     python3 -m venv ~/.venvs/dpenv
 #     source ~/.venvs/dpenv/bin/activate
 # 2. Update dependencies from pyproject.toml:
 #     ./scripts/upgrade.sh:
-#       - Update requirements.txt with any new dependencies added to pyproject.toml
+#       - Updates requirements.txt with any new dependencies added to pyproject.toml
 # 3. Upgrade all python modules to latest version:
 #     ./scripts/upgrade.sh all:
 #       - Upgrade all packages in pyproject.toml to latest pinned version

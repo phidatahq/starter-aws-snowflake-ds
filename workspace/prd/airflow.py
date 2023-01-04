@@ -13,22 +13,24 @@ from phidata.app.redis import Redis, RedisVolumeType
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
 
-from workspace.prd.aws_resources import prd_logs_s3_bucket
-from workspace.prd.pg_dbs import prd_db_airflow_connections
-from workspace.prd.images import prd_airflow_image
-from workspace.settings import (
-    airflow_enabled,
-    aws_az,
-    aws_region,
-    prd_domain,
-    prd_key,
-    prd_tags,
+from workspace.prd.aws_resources import (
+    prd_logs_s3_bucket,
     services_ng_label,
     topology_spread_key,
     topology_spread_max_skew,
     topology_spread_when_unsatisfiable,
-    use_cache,
     workers_ng_label,
+)
+from workspace.prd.pg_dbs import prd_db_airflow_connections
+from workspace.prd.images import prd_airflow_image
+from workspace.settings import (
+    airflow_enabled,
+    aws_az_1a,
+    aws_region,
+    prd_domain,
+    prd_key,
+    prd_tags,
+    use_cache,
     ws_dir_path,
     ws_repo,
 )
@@ -43,7 +45,7 @@ aws_skip_delete: bool = False
 prd_airflow_db_volume = EbsVolume(
     name=f"airflow-db-{prd_key}",
     size=32,
-    availability_zone=aws_az,
+    availability_zone=aws_az_1a,
     tags=prd_tags,
     skip_delete=aws_skip_delete,
 )
@@ -51,7 +53,7 @@ prd_airflow_db_volume = EbsVolume(
 prd_airflow_redis_volume = EbsVolume(
     name=f"airflow-redis-{prd_key}",
     size=16,
-    availability_zone=aws_az,
+    availability_zone=aws_az_1a,
     tags=prd_tags,
     skip_delete=aws_skip_delete,
 )

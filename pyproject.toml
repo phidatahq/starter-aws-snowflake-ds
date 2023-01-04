@@ -8,12 +8,17 @@ authors = [
 ]
 
 dependencies = [
+    "black[jupyter]",
     "matplotlib",
+    "mypy",
     "numpy",
     "pandas",
     "phidata>=0.4.5",
     "prophet",
+    "psycopg2-binary",
+    "pytest",
     "requests",
+    "ruff",
     "scikit-learn",
     "scipy",
     "seaborn",
@@ -21,16 +26,13 @@ dependencies = [
     "snowflake-connector-python[pandas]",
     "snowflake-sqlalchemy[pandas]",
     "sqlalchemy",
+    # "types-requests",
     "xgboost",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "mypy",
-    "black[jupyter]",
-    "pytest",
+pg = [
     "psycopg2-binary",
-    "types-requests",
 ]
 
 [build-system]

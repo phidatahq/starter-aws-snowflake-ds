@@ -1,4 +1,4 @@
-FROM phidata/airflow:2.4.2
+FROM phidata/airflow:2.5.0
 
 RUN pip install --upgrade pip
 
@@ -7,6 +7,8 @@ RUN pip install -r /requirements.txt
 
 COPY workspace/dev/airflow_resources /
 RUN pip install -r /requirements-airflow.txt
+
+COPY workspace/dev/airflow_resources/webserver_config.py ${AIRFLOW_HOME}/
 
 # Install python3 kernel for jupyter
 RUN ipython kernel install --name "python3"

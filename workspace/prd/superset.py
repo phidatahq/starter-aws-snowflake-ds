@@ -11,18 +11,20 @@ from phidata.app.superset import (
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
 
-from workspace.prd.images import prd_superset_image
-from workspace.settings import (
-    aws_az,
-    prd_key,
-    prd_tags,
+from workspace.prd.aws_resources import (
     services_ng_label,
-    superset_enabled,
     topology_spread_key,
     topology_spread_max_skew,
     topology_spread_when_unsatisfiable,
-    use_cache,
     workers_ng_label,
+)
+from workspace.prd.images import prd_superset_image
+from workspace.settings import (
+    aws_az_1a,
+    prd_key,
+    prd_tags,
+    superset_enabled,
+    use_cache,
     ws_dir_path,
     ws_repo,
 )
@@ -37,7 +39,7 @@ aws_skip_delete: bool = False
 prd_superset_db_volume = EbsVolume(
     name=f"superset-db-{prd_key}",
     size=16,
-    availability_zone=aws_az,
+    availability_zone=aws_az_1a,
     tags=prd_tags,
     skip_delete=aws_skip_delete,
 )
@@ -45,7 +47,7 @@ prd_superset_db_volume = EbsVolume(
 prd_superset_redis_volume = EbsVolume(
     name=f"superset-redis-{prd_key}",
     size=8,
-    availability_zone=aws_az,
+    availability_zone=aws_az_1a,
     tags=prd_tags,
     skip_delete=aws_skip_delete,
 )

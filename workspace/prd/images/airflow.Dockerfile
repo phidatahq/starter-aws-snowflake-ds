@@ -1,4 +1,4 @@
-FROM phidata/airflow:2.4.2
+FROM phidata/airflow:2.5.0
 
 RUN pip install --upgrade pip
 
