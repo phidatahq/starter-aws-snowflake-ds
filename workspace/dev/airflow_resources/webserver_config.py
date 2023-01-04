@@ -26,39 +26,32 @@ SQLALCHEMY_DATABASE_URI = conf.get("database", "SQL_ALCHEMY_CONN")
 # AUTH_REMOTE_USER : Is for using REMOTE_USER from web server
 # AUTH_OAUTH : Is for OAuth
 
-# Default: Use AUTH_DB i.e. user/pass authentication
+# Use OAUTH i.e. Google, Facebook, GitHub authentication
 AUTH_TYPE = AUTH_OAUTH
+# Allow user self registration
+AUTH_USER_REGISTRATION = True
 # The default user self registration role
 AUTH_USER_REGISTRATION_ROLE = "Admin"
 # If we should replace ALL the user's roles each login, or only on registration
 AUTH_ROLES_SYNC_AT_LOGIN = True
 
-# Production: Use OAUTH i.e. Google, Facebook, GitHub authentication
-# AUTH_TYPE = AUTH_OAUTH
-
 # Enable Google OAuth
-# Read CLIENT_ID from env
-GOOGLE_CLIENT_ID = os.getenv("AIRFLOW__GOOGLE__CLIENT_ID")
-# Read CLIENT_SECRET from env
-GOOGLE_CLIENT_SECRET = os.getenv("AIRFLOW__GOOGLE__CLIENT_SECRET")
-# Read DOMAIN from env
-GOOGLE_DOMAIN = os.getenv("AIRFLOW__GOOGLE__DOMAIN")
-
 OAUTH_PROVIDERS = [
     {
         "name": "google",
         "icon": "fa-google",
         "token_key": "access_token",
         "remote_app": {
-            "client_id": GOOGLE_CLIENT_ID,
-            "client_secret": GOOGLE_CLIENT_SECRET,
+            "client_id": os.getenv("AIRFLOW__GOOGLE__CLIENT_ID"),
+            "client_secret": os.getenv("AIRFLOW__GOOGLE__CLIENT_SECRET"),
             "api_base_url": "https://www.googleapis.com/oauth2/v2/",
             "client_kwargs": {"scope": "email profile"},
+            "request_token_url": None,
             "access_token_url": "https://accounts.google.com/o/oauth2/token",
             "authorize_url": "https://accounts.google.com/o/oauth2/auth",
-            "request_token_url": None,
+            "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
         },
-        "whitelist": [f"@{GOOGLE_DOMAIN}"],
+        "whitelist": ["@{}".format(os.getenv("AIRFLOW__GOOGLE__DOMAIN"))],
     }
 ]
 

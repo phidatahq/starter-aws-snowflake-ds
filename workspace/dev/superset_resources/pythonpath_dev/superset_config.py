@@ -1,10 +1,15 @@
-import logging
+"""
+SUPERSET CONFIGURATION
+https://superset.apache.org/docs/installation/configuring-superset
+"""
+
 import os
-from datetime import timedelta
+import logging
 from typing import Optional
 
 from cachelib.redis import RedisCache
 from celery.schedules import crontab
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 logger = logging.getLogger()
 
@@ -23,7 +28,9 @@ def get_env_variable(var_name: str, default: Optional[str] = None) -> str:
             raise EnvironmentError(error_msg)
 
 
-# Database configuration
+# ----------------------------------------------------
+# DATABASE CONFIG
+# ----------------------------------------------------
 DATABASE_DIALECT = get_env_variable("DATABASE_DIALECT")
 DATABASE_USER = get_env_variable("DATABASE_USER")
 DATABASE_PASSWORD = get_env_variable("DATABASE_PASSWORD")
@@ -41,7 +48,9 @@ SQLALCHEMY_DATABASE_URI = "%s://%s:%s@%s:%s/%s" % (
     DATABASE_DB,
 )
 
-# Redis configuration
+# ----------------------------------------------------
+# CELERY CONFIG
+# ----------------------------------------------------
 REDIS_HOST = get_env_variable("REDIS_HOST")
 REDIS_PORT = get_env_variable("REDIS_PORT")
 REDIS_DIALECT = get_env_variable("REDIS_DIALECT", "redis")
@@ -76,17 +85,10 @@ class CeleryConfig(object):
 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True}
-ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
-WEBDRIVER_BASEURL = "http://superset:8088/"
-# The base URL for the email report hyperlinks.
-WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
-
-SQLLAB_CTAS_NO_LIMIT = True
-
-# Cache configurations
+# ----------------------------------------------------
+# CACHE CONFIG
 # https://superset.apache.org/docs/installation/cache/
-#
+# ----------------------------------------------------
 CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
@@ -114,10 +116,54 @@ DATA_CACHE_CONFIG = {
     "CACHE_DEFAULT_TIMEOUT": 86400,
 }
 
-#
-# Custom configuration
-#
+# ----------------------------------------------------
+# AUTHENTICATION CONFIG
+# ----------------------------------------------------
+# Use OAUTH i.e. Google, Facebook, GitHub authentication
+AUTH_TYPE = AUTH_OAUTH
+# Allow user self registration
+AUTH_USER_REGISTRATION = True
+# The default user self registration role
+AUTH_USER_REGISTRATION_ROLE = "Public"
+# If we should replace ALL the user's roles each login, or only on registration
+AUTH_ROLES_SYNC_AT_LOGIN = True
+
+# Grant public role the same set of permissions as for a selected builtin role.
+# This is useful if one wants to enable anonymous users to view
+# dashboards. Explicit grant on specific datasets is still required.
+# https://superset.apache.org/docs/security/#public
+PUBLIC_ROLE_LIKE = "Gamma"
+
+# Enable Google OAuth
+OAUTH_PROVIDERS = [
+    {
+        "name": "google",
+        "icon": "fa-google",
+        "token_key": "access_token",
+        "remote_app": {
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "api_base_url": "https://www.googleapis.com/oauth2/v2/",
+            "client_kwargs": {"scope": "email profile"},
+            "request_token_url": None,
+            "access_token_url": "https://accounts.google.com/o/oauth2/token",
+            "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+            "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
+        },
+        "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
+    }
+]
+
+# ----------------------------------------------------
+# EXTRA CONFIG OPTIONS
+# ----------------------------------------------------
 ROW_LIMIT = 5000
 # Enable Flask-WTF flag for CSRF
 WTF_CSRF_ENABLED = True
 SECRET_KEY = get_env_variable("SECRET_KEY", "my_precious")
+FEATURE_FLAGS = {"ALERT_REPORTS": True}
+ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
+WEBDRIVER_BASEURL = "http://superset:8088/"
+# The base URL for the email report hyperlinks.
+WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
+SQLLAB_CTAS_NO_LIMIT = True

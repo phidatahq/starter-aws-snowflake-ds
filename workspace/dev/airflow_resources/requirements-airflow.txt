@@ -11,3 +11,4 @@ papermill[all]>=1.2.1
 scrapbook[all]
 ipython==8.6.0
 ipykernel>=6
+Authlib==1.2.0
