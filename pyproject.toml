@@ -16,7 +16,6 @@ dependencies = [
     "phidata>=0.4.5",
     "pre-commit",
     "prophet",
-    "psycopg2-binary",
     "pytest",
     "requests",
     "ruff",
