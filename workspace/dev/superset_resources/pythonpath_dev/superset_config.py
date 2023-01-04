@@ -10,6 +10,7 @@ from typing import Optional
 from cachelib.redis import RedisCache
 from celery.schedules import crontab
 from flask_appbuilder.security.manager import AUTH_OAUTH
+from custom_sso_security_manager import CustomSsoSecurityManager
 
 logger = logging.getLogger()
 
@@ -124,9 +125,13 @@ AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
 AUTH_USER_REGISTRATION = True
 # The default user self registration role
-AUTH_USER_REGISTRATION_ROLE = "Alpha"
+AUTH_USER_REGISTRATION_ROLE = "Public"
 # If we should replace ALL the user's roles each login, or only on registration
 AUTH_ROLES_SYNC_AT_LOGIN = True
+AUTH_ROLES_MAPPING = {
+    "Alpha": ["Alpha"],
+    "Admin": ["Admin"],
+}
 
 # Grant public role the same set of permissions as for a selected builtin role.
 # This is useful if one wants to enable anonymous users to view
@@ -150,9 +155,25 @@ OAUTH_PROVIDERS = [
             "authorize_url": "https://accounts.google.com/o/oauth2/auth",
             "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
         },
-        "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
-    }
+        # "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
+    },
+    {
+        "name": "github",
+        "icon": "fa-github",
+        "token_key": "access_token",
+        "remote_app": {
+            "client_id": os.getenv("GITHUB_CLIENT_ID"),
+            "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
+            "api_base_url": "https://api.github.com",
+            "client_kwargs": {"scope": "read:user, read:org"},
+            "access_token_url": "https://github.com/login/oauth/access_token",
+            "authorize_url": "https://github.com/login/oauth/authorize",
+            "request_token_url": None,
+        },
+    },
 ]
+
+CUSTOM_SECURITY_MANAGER = CustomSsoSecurityManager
 
 # ----------------------------------------------------
 # EXTRA CONFIG OPTIONS
