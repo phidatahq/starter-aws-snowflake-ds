@@ -1,10 +1,10 @@
 from phidata.asset.aws.s3.csv_dataset import S3DatasetCsv
 from phidata.task import TaskArgs, task
-from phidata.workflow import Workflow
 from phidata.utils.log import logger
+from phidata.workflow import Workflow
 
-from workflows.env import AIRFLOW_ENV
 from workflows.buckets import DATA_S3_BUCKET
+from workflows.env import AIRFLOW_ENV
 
 ##############################################################################
 # As workflow for calculating daily active users using s3 and athena

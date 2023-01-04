@@ -1,6 +1,6 @@
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
-from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
+from phidata.infra.aws.resource.group import AwsResourceGroup
 
 from workspace.prd.aws_resources import services_ng_label
 from workspace.settings import (

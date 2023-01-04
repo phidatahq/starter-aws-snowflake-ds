@@ -1,7 +1,7 @@
 from phidata.infra.docker.resource.container import DockerContainer
 from phidata.infra.docker.resource.group import DockerResourceGroup
 
-from workspace.settings import ws_name, use_cache, traefik_enabled
+from workspace.settings import traefik_enabled, use_cache, ws_name
 
 # -*- Traefik docker resources
 

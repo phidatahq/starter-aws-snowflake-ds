@@ -1,5 +1,7 @@
 from phidata.app.traefik import IngressRoute, ServiceType
 
+from workspace.k8s.whoami import whoami_port, whoami_service
+from workspace.prd.airflow import prd_airflow_flower, prd_airflow_ws
 from workspace.prd.aws_resources import (
     prd_aws_dp_certificate,
     services_ng_label,
@@ -7,10 +9,8 @@ from workspace.prd.aws_resources import (
     topology_spread_max_skew,
     topology_spread_when_unsatisfiable,
 )
-from workspace.prd.airflow import prd_airflow_ws, prd_airflow_flower
-from workspace.prd.superset import prd_superset_ws
 from workspace.prd.jupyter import prd_jupyter
-from workspace.k8s.whoami import whoami_service, whoami_port
+from workspace.prd.superset import prd_superset_ws
 from workspace.settings import (
     airflow_enabled,
     jupyter_enabled,

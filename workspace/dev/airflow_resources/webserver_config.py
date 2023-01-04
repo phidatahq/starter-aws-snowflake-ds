@@ -1,8 +1,7 @@
 import os
 
-from airflow.www.fab_security.manager import AUTH_DB
-from airflow.www.fab_security.manager import AUTH_OAUTH
 from airflow.configuration import conf
+from airflow.www.fab_security.manager import AUTH_DB, AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

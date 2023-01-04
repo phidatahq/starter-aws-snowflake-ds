@@ -1,11 +1,11 @@
 from phidata.infra.docker.resource.image import DockerImage
+
 from workspace.settings import (
-    ws_name,
-    use_cache,
     airflow_enabled,
-    superset_enabled,
-    jupyter_enabled,
     data_platform_dir_path,
+    jupyter_enabled,
+    superset_enabled,
+    use_cache,
 )
 
 # -*- Dev images

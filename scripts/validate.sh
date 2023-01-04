@@ -21,19 +21,14 @@ main() {
   print_heading "Validating workspace..."
   print_heading "Running: black ${REPO_ROOT}"
   black ${REPO_ROOT}
-  print_status "Done."
   print_heading "Running: mypy ${REPO_ROOT}"
   mypy ${REPO_ROOT}
-  print_status "Done."
   print_heading "Running: pytest ${REPO_ROOT}"
   pytest ${REPO_ROOT}
-  print_status "Done."
   print_heading "Running: ruff ${REPO_ROOT}"
-  ruff ${REPO_ROOT}/*.py
-  print_status "Done."
+  ruff ${REPO_ROOT}
   print_heading "Running: pre-commit run --all-files"
   pre-commit run --all-files
-  print_status "Done."
 }
 
 main "$@"

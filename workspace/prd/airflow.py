@@ -1,17 +1,17 @@
-from typing import Dict
 from pathlib import Path
+from typing import Dict
 
 from phidata.app.airflow import (
-    AirflowWebserver,
-    AirflowScheduler,
-    AirflowWorker,
     AirflowFlower,
+    AirflowScheduler,
+    AirflowWebserver,
+    AirflowWorker,
     ImagePullPolicy,
 )
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
-from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
+from phidata.infra.aws.resource.group import AwsResourceGroup
 
 from workspace.prd.aws_resources import (
     prd_logs_s3_bucket,
@@ -21,8 +21,8 @@ from workspace.prd.aws_resources import (
     topology_spread_when_unsatisfiable,
     workers_ng_label,
 )
-from workspace.prd.pg_dbs import prd_db_airflow_connections
 from workspace.prd.images import prd_airflow_image
+from workspace.prd.pg_dbs import prd_db_airflow_connections
 from workspace.settings import (
     airflow_enabled,
     aws_az_1a,

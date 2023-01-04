@@ -1,7 +1,7 @@
 from phidata.app.jupyter import JupyterLab
 
 from workspace.dev.images import dev_jupyter_image
-from workspace.settings import ws_dir_path, use_cache, jupyter_enabled
+from workspace.settings import jupyter_enabled, use_cache, ws_dir_path
 
 # -*- Docker resources
 

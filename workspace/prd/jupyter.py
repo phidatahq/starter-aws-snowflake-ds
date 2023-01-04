@@ -1,6 +1,6 @@
-from phidata.app.jupyter import JupyterLab, ImagePullPolicy
-from phidata.infra.aws.resource.group import AwsResourceGroup
+from phidata.app.jupyter import ImagePullPolicy, JupyterLab
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
+from phidata.infra.aws.resource.group import AwsResourceGroup
 
 from workspace.prd.aws_resources import (
     topology_spread_key,

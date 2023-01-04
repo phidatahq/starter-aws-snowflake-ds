@@ -1,7 +1,7 @@
 from typing import Dict
 
 from phidata.asset.file import File
-from phidata.task import task, TaskArgs
+from phidata.task import TaskArgs, task
 from phidata.utils.log import logger
 
 ##############################################################################

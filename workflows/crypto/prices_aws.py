@@ -1,12 +1,12 @@
 from typing import Dict
 
-from phidata.task import TaskArgs, task
-from phidata.workflow import Workflow
-from phidata.utils.log import logger
 from phidata.asset.aws.s3.dataset import S3Dataset
+from phidata.task import TaskArgs, task
+from phidata.utils.log import logger
+from phidata.workflow import Workflow
 
-from workflows.env import AIRFLOW_ENV
 from workflows.buckets import DATA_S3_BUCKET
+from workflows.env import AIRFLOW_ENV
 
 ##############################################################################
 # A workflow to write hourly cryptocurrency price data to s3

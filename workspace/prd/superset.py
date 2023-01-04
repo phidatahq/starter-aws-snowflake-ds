@@ -3,13 +3,13 @@ from pathlib import Path
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
 from phidata.app.superset import (
-    SupersetWebserver,
     SupersetInit,
+    SupersetWebserver,
     SupersetWorker,
     SupersetWorkerBeat,
 )
-from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.ec2.volume import EbsVolume
+from phidata.infra.aws.resource.group import AwsResourceGroup
 
 from workspace.prd.aws_resources import (
     services_ng_label,
@@ -78,7 +78,7 @@ prd_superset_secrets_file: Path = ws_dir_path.joinpath(
 
 # Superset db: A postgres instance to use as the database for superset
 prd_superset_db = PostgresDb(
-    name=f"ss-db",
+    name="ss-db",
     enabled=superset_enabled,
     volume_type=PostgresVolumeType.AWS_EBS,
     ebs_volume=prd_superset_db_volume,
@@ -88,7 +88,7 @@ prd_superset_db = PostgresDb(
 
 # Superset redis: A redis instance to use as the celery backend for superset
 prd_superset_redis = Redis(
-    name=f"ss-redis",
+    name="ss-redis",
     enabled=superset_enabled,
     volume_type=RedisVolumeType.AWS_EBS,
     ebs_volume=prd_superset_redis_volume,

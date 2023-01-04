@@ -1,22 +1,18 @@
-from typing import Dict
 from pathlib import Path
+from typing import Dict
 
-from phidata.app.airflow import (
-    AirflowWebserver,
-    AirflowScheduler,
-    AirflowWorker,
-)
+from phidata.app.airflow import AirflowScheduler, AirflowWebserver, AirflowWorker
 from phidata.app.postgres import PostgresDb
 from phidata.app.redis import Redis
 
 from workspace.dev.images import dev_airflow_image
 from workspace.dev.pg_dbs import dev_pg_db_airflow_connections
 from workspace.settings import (
-    aws_region,
     airflow_enabled,
+    aws_region,
     use_cache,
-    ws_name,
     ws_dir_path,
+    ws_name,
 )
 
 # -*- Docker resources

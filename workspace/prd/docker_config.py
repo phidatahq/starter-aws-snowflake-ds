@@ -1,8 +1,7 @@
 from phidata.infra.docker.config import DockerConfig
 
-from workspace.settings import ws_name, prd_env
 from workspace.prd.images import prd_images
-
+from workspace.settings import prd_env, ws_name
 
 # -*- Define prd docker resources using the DockerConfig
 prd_docker_config = DockerConfig(

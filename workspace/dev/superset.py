@@ -2,13 +2,10 @@ from pathlib import Path
 
 from phidata.app.postgres import PostgresDb
 from phidata.app.redis import Redis
-from phidata.app.superset import (
-    SupersetWebserver,
-    SupersetInit,
-)
+from phidata.app.superset import SupersetInit, SupersetWebserver
 
 from workspace.dev.images import dev_superset_image
-from workspace.settings import ws_name, ws_dir_path, use_cache, superset_enabled
+from workspace.settings import superset_enabled, use_cache, ws_dir_path, ws_name
 
 # -*- Docker resources
 

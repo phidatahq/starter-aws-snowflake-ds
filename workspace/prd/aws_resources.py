@@ -1,18 +1,17 @@
-from typing_extensions import Literal
-
 from phidata.infra.aws.resource.acm.certificate import AcmCertificate
+from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
 from phidata.infra.aws.resource.eks.cluster import EksCluster
 from phidata.infra.aws.resource.eks.kubeconfig import EksKubeconfig
 from phidata.infra.aws.resource.eks.node_group import EksNodeGroup
 from phidata.infra.aws.resource.group import AwsResourceGroup
 from phidata.infra.aws.resource.s3.bucket import S3Bucket
-from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
+from typing_extensions import Literal
 
 from workspace.settings import (
     prd_domain,
     prd_key,
-    private_subnets,
     prd_tags,
+    private_subnets,
     ws_dir_path,
 )
 

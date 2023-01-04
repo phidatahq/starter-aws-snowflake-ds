@@ -1,6 +1,6 @@
 from phidata.app.postgres import PostgresDb
 
-from workspace.settings import ws_name, pg_dbs_enabled
+from workspace.settings import pg_dbs_enabled, ws_name
 
 # -*- Dev databases on docker
 

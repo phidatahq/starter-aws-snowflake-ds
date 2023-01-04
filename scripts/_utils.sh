@@ -17,5 +17,5 @@ print_heading() {
 }
 
 print_status() {
-  echo "* $1"
+  echo "-*- $1"
 }

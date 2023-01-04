@@ -1,7 +1,7 @@
 from phidata.asset.table.sql.postgres import PostgresTable
 from phidata.task import TaskArgs, task
-from phidata.workflow import Workflow
 from phidata.utils.log import logger
+from phidata.workflow import Workflow
 
 from workflows.sql_dbs import PG_DB_APP, PG_DB_CONN_ID
 
