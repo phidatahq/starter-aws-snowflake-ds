@@ -7,7 +7,6 @@
 # 2. Type check using mypy
 # 3. Test using pytest
 # 4. Lint using ruff
-# 5. Run pre-commit hooks
 # Usage:
 #   ./scripts/format.sh
 #
@@ -27,8 +26,6 @@ main() {
   pytest ${REPO_ROOT}
   print_heading "Running: ruff ${REPO_ROOT}"
   ruff ${REPO_ROOT}
-  print_heading "Running: pre-commit run --all-files"
-  pre-commit run --all-files
 }
 
 main "$@"

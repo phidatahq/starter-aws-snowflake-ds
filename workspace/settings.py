@@ -66,4 +66,4 @@ private_subnets: List[str] = [
 #
 # By default use_cache=True and `phi` skips creation if a resource with the same name is found.
 # Set use_cache=False to force recreate resources even if they exist.
-use_cache: bool = env_var_is_true("CACHE", True)
+use_cache: bool = env_var_is_true("USE_CACHE", True)
