@@ -74,7 +74,7 @@ prd_airflow_env: Dict[str, str] = {
     "AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID": "aws_default",
 }
 
-# Airflow db: A postres instance to use as the database for airflow
+# -*- Airflow db: A postres instance to use as the database for airflow
 prd_airflow_db = PostgresDb(
     name="af-db",
     enabled=(not use_rds),
@@ -84,7 +84,7 @@ prd_airflow_db = PostgresDb(
     pod_node_selector=services_ng_label,
 )
 
-# Airflow redis: A redis instance to use as the celery backend for airflow
+# -*- Airflow redis: A redis instance to use as the celery backend for airflow
 prd_airflow_redis = Redis(
     name="af-redis",
     enabled=(not use_elasticache),
@@ -94,29 +94,54 @@ prd_airflow_redis = Redis(
     pod_node_selector=services_ng_label,
 )
 
-# Database configuration
-db_app = prd_airflow_db if (not use_rds) else None
-db_user = prd_airflow_rds_db.get_master_username() if use_rds else None
-db_password = prd_airflow_rds_db.get_master_password() if use_rds else None
-db_schema = prd_airflow_rds_db.get_db_name() if use_rds else None
-# NOTE: Add DATABASE_HOST & DATABASE_PORT env variables to secrets
+# -*- Database configuration
+db_user = (
+    prd_airflow_rds_db.get_master_username()
+    if use_rds
+    else prd_airflow_db.get_db_user()
+)
+db_password = (
+    prd_airflow_rds_db.get_master_password()
+    if use_rds
+    else prd_airflow_db.get_db_password()
+)
+db_schema = (
+    prd_airflow_rds_db.get_db_name() if use_rds else prd_airflow_db.get_db_schema()
+)
+db_driver = "postgresql"
+# NOTE: Add DATABASE_HOST & DATABASE_PORT env variables to secrets for RDS
+db_host = None if use_rds else prd_airflow_db.get_db_host_k8s()
+db_port = None if use_rds else prd_airflow_db.get_db_port_k8s()
 
-# Redis configuration
-redis_app = prd_airflow_redis if (not use_elasticache) else None
-redis_password = prd_airflow_redis_cluster.get_auth_token() if use_elasticache else None
+# -*- Redis configuration
+redis_password = (
+    prd_airflow_redis_cluster.get_auth_token()
+    if use_elasticache
+    else prd_airflow_redis.get_db_password()
+)
 redis_driver = "rediss" if redis_password else "redis"
 # NOTE: Add REDIS_HOST & REDIS_PORT env variables to secrets
+redis_host = None if use_elasticache else prd_airflow_redis.get_db_host_k8s()
+redis_port = None if use_elasticache else prd_airflow_redis.get_db_port_k8s()
 
-# Airflow webserver
+# -*- Airflow webserver
 prd_airflow_ws = AirflowWebserver(
     replicas=2,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
-    db_app=prd_airflow_db,
-    wait_for_db=wait_for_db,
-    redis_app=prd_airflow_redis,
-    wait_for_redis=wait_for_redis,
     executor=executor,
+    wait_for_db=wait_for_db,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_driver=db_driver,
+    db_host=db_host,
+    db_port=db_port,
+    wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -136,16 +161,24 @@ prd_airflow_ws = AirflowWebserver(
     wait_for_db_init=True,
 )
 
-# Airflow scheduler
+# -*- Airflow scheduler
 prd_airflow_scheduler = AirflowScheduler(
     replicas=2,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
-    db_app=prd_airflow_db,
-    wait_for_db=wait_for_db,
-    redis_app=prd_airflow_redis,
-    wait_for_redis=wait_for_redis,
     executor=executor,
+    wait_for_db=wait_for_db,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_driver=db_driver,
+    db_host=db_host,
+    db_port=db_port,
+    wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -169,17 +202,25 @@ prd_airflow_scheduler = AirflowScheduler(
     create_airflow_admin_user=True,
 )
 
-# Airflow worker queue
+# -*- Airflow workers
 prd_airflow_worker = AirflowWorker(
     replicas=2,
     queue_name="default,tier_1",
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
-    db_app=prd_airflow_db,
-    wait_for_db=wait_for_db,
-    redis_app=prd_airflow_redis,
-    wait_for_redis=wait_for_redis,
     executor=executor,
+    wait_for_db=wait_for_db,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_driver=db_driver,
+    db_host=db_host,
+    db_port=db_port,
+    wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -199,17 +240,24 @@ prd_airflow_worker = AirflowWorker(
     wait_for_db_init=True,
 )
 
-
-# Airflow flower
+# -*- Airflow flower
 prd_airflow_flower = AirflowFlower(
     replicas=1,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
-    db_app=prd_airflow_db,
-    wait_for_db=wait_for_db,
-    redis_app=prd_airflow_redis,
-    wait_for_redis=wait_for_redis,
     executor=executor,
+    wait_for_db=wait_for_db,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_driver=db_driver,
+    db_host=db_host,
+    db_port=db_port,
+    wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
