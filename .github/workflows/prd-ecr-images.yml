@@ -1,4 +1,4 @@
-name: Build ECR Images
+name: Production ECR Images
 
 on: workflow_dispatch
 

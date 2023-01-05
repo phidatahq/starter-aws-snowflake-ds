@@ -132,5 +132,5 @@ prd_aws_resources = AwsResourceGroup(
     # Uncomment to create a VPC cloudformation stack
     # cloudformation_stacks=[prd_vpc_stack],
     # Uncomment to create an ACM certificate for domain
-    acm_certificates=[prd_acm_certificate],
+    # acm_certificates=[prd_acm_certificate],
 )
