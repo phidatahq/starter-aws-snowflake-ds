@@ -54,12 +54,10 @@ aws_region: str = "us-east-1"
 # Availability Zone for EbsVolumes
 aws_az_1a: str = "us-east-1a"
 aws_az_1b: str = "us-east-1b"
-# Production Subnets
+# 2 public subnets. 1 in each AZ.
 public_subnets: List[str] = ["subnet-0aebed09ea7c82a5f", "subnet-0d53d74c0bb98ac9d"]
-private_subnets: List[str] = [
-    "subnet-0964a2e70b7289ee5",
-    "subnet-0c2587701e140e69e",
-]
+# 2 private subnets. 1 in each AZ.
+private_subnets: List[str] = ["subnet-0964a2e70b7289ee5", "subnet-0c2587701e140e69e"]
 # Security Groups
 security_groups: Optional[List[str]] = None
 

@@ -74,6 +74,7 @@ prd_airflow_rds_db = DbInstance(
     vpc_security_group_ids=security_groups,
     secrets_file=ws_dir_path.joinpath("secrets/prd_airflow_db_secrets.yml"),
     skip_delete=aws_skip_delete,
+    wait_for_creation=False,
 )
 
 # -*- Elasticache Redis Cluster
@@ -88,6 +89,7 @@ prd_airflow_redis_cluster = CacheCluster(
     cache_subnet_group=prd_elasticache_subnet_group,
     preferred_availability_zone=aws_az_1a,
     skip_delete=aws_skip_delete,
+    wait_for_creation=False,
 )
 
 prd_airflow_aws_resources = AwsResourceGroup(

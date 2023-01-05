@@ -10,5 +10,5 @@ prd_docker_config = DockerConfig(
     env=prd_env,
     network=ws_name,
     # uncomment the following line to build local images
-    # images=prd_images,
+    images=prd_images,
 )
