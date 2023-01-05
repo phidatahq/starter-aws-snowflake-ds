@@ -4,7 +4,7 @@ from typing import Optional
 
 from cachelib.redis import RedisCache
 from celery.schedules import crontab
-from flask_appbuilder.security.manager import AUTH_OAUTH
+from flask_appbuilder.security.manager import AUTH_DB, AUTH_OAUTH
 from custom_sso_security_manager import CustomSsoSecurityManager
 
 logger = logging.getLogger()
@@ -116,10 +116,12 @@ DATA_CACHE_CONFIG = {
 # AUTHENTICATION CONFIG
 # http://flask-appbuilder.readthedocs.io/en/latest/security.html#authentication-methods
 # ----------------------------------------------------
-# Use OAUTH i.e. Google, Facebook, GitHub authentication
-AUTH_TYPE = AUTH_OAUTH
+# Dev: Use AUTH_DB i.e. user/pass authentication
+AUTH_TYPE = AUTH_DB
+# Production: Use OAUTH i.e. Google, Facebook, GitHub authentication
+# AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
-AUTH_USER_REGISTRATION = True
+# AUTH_USER_REGISTRATION = True
 # The default user self registration role
 # This role will be given in addition to any AUTH_ROLES_MAPPING
 AUTH_USER_REGISTRATION_ROLE = "Public"
@@ -175,6 +177,7 @@ CUSTOM_SECURITY_MANAGER = CustomSsoSecurityManager
 # ----------------------------------------------------
 # ADDITIONAL CONFIGURATION
 # ----------------------------------------------------
+ENABLE_PROXY_FIX = True
 ROW_LIMIT = 5000
 # Enable Flask-WTF flag for CSRF
 WTF_CSRF_ENABLED = True

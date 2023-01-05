@@ -1,5 +1,5 @@
 from phidata.app.group import AppGroup
-from phidata.app.traefik import IngressRoute, ServiceType
+from phidata.app.traefik import IngressRoute, ServiceType, LoadBalancerProvider
 
 from workspace.prd.aws_resources import (
     prd_acm_certificate,
@@ -108,20 +108,14 @@ traefik_ingress_route = IngressRoute(
     acm_certificate_summary_file=prd_acm_certificate.certificate_summary_file,
     # Use a LoadBalancer service
     service_type=ServiceType.LOAD_BALANCER,
-    # Configure the LoadBalancer using annotations:
-    service_annotations={
-        # Use a Network LoadBalancer
-        # reference: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
-        "service.beta.kubernetes.io/aws-load-balancer-type": "nlb",
-        "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": "ip",
-        # To make the load balancer internal. Set internal = "true"
-        # reference: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
-        "service.beta.kubernetes.io/aws-load-balancer-internal": "true",
-        "service.beta.kubernetes.io/aws-load-balancer-subnets": ", ".join(
-            private_subnets
-        ),
-        # Other annotations: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/service/annotations/#annotations
-    },
+    # Use AWS LoadBalancer
+    load_balancer_provider=LoadBalancerProvider.AWS,
+    # Use a Network LoadBalancer
+    use_nlb=True,
+    # Use the private subnets
+    load_balancer_subnets=private_subnets,
+    # Use an internal load balancer
+    load_balancer_scheme="internal",
     # Enable traefik dashboard
     dashboard_enabled=True,
     # Serve traefik dashboard at traefik.prd_domain
