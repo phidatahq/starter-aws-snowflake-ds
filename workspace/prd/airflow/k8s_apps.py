@@ -13,8 +13,12 @@ from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
 
 from workspace.prd.airflow.aws_resources import (
+    use_rds,
+    use_elasticache,
+    prd_airflow_rds_db,
     prd_airflow_db_volume,
     prd_airflow_redis_volume,
+    prd_airflow_redis_cluster,
 )
 from workspace.prd.aws_resources import (
     prd_logs_s3_bucket,
@@ -73,6 +77,7 @@ prd_airflow_env: Dict[str, str] = {
 # Airflow db: A postres instance to use as the database for airflow
 prd_airflow_db = PostgresDb(
     name="af-db",
+    enabled=(not use_rds),
     volume_type=PostgresVolumeType.AWS_EBS,
     ebs_volume=prd_airflow_db_volume,
     secrets_file=ws_dir_path.joinpath("secrets/prd_airflow_db_secrets.yml"),
@@ -82,11 +87,25 @@ prd_airflow_db = PostgresDb(
 # Airflow redis: A redis instance to use as the celery backend for airflow
 prd_airflow_redis = Redis(
     name="af-redis",
+    enabled=(not use_elasticache),
     volume_type=RedisVolumeType.AWS_EBS,
     ebs_volume=prd_airflow_redis_volume,
     command=["redis-server", "--save", "60", "1"],
     pod_node_selector=services_ng_label,
 )
+
+# Database configuration
+db_app = prd_airflow_db if (not use_rds) else None
+db_user = prd_airflow_rds_db.get_master_username() if use_rds else None
+db_password = prd_airflow_rds_db.get_master_password() if use_rds else None
+db_schema = prd_airflow_rds_db.get_db_name() if use_rds else None
+# NOTE: Add DATABASE_HOST & DATABASE_PORT env variables to secrets
+
+# Redis configuration
+redis_app = prd_airflow_redis if (not use_elasticache) else None
+redis_password = prd_airflow_redis_cluster.get_auth_token() if use_elasticache else None
+redis_driver = "rediss" if redis_password else "redis"
+# NOTE: Add REDIS_HOST & REDIS_PORT env variables to secrets
 
 # Airflow webserver
 prd_airflow_ws = AirflowWebserver(
