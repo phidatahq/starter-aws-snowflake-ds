@@ -1,6 +1,6 @@
-## AWS Data Platform
+## Data Platform
 
-This repo contains the code for building a data platform with 2 data environments:
+This repo contains the code for a data platform with 2 data environments:
 
 1. dev: A development env running on docker
 2. prd: A production env running on aws + k8s
@@ -18,7 +18,7 @@ source ~/.venvs/dpenv/bin/activate
 
 ```sh
 pip install phidata
-phi init
+phi init -l
 ```
 
 > from the `data-platform` dir:
@@ -55,13 +55,12 @@ cp example.env .env
 
 ## Using the dev environment
 
-The [workspace/dev](workspace/dev) directory contains the code for the dev resources. The [workspace/settings.py](workspace/settings.py) file can be used to enable other apps like:
+The [workspace/dev](workspace/dev) directory contains the code for the dev environment that runs:
 
-1. Postgres App: for storing dev data (runs 1 container)
-2. Airflow App: for running workflows (runs 5 containers)
-3. Superset App: for visualizing dev data (runs 4 containers)
+1. Airflow App: for developing workflows (runs 5 containers)
+2. Jupyter App: for analyzing dev data (runs 1 container)
 
-Update the [workspace/settings.py](workspace/settings.py) file and run:
+Run:
 
 ```sh
 phi ws up
@@ -71,7 +70,7 @@ TIP: The `phi ws ...` commands use `--env dev` and `--config docker` by default.
 
 Running `phi ws up` is equivalent to running `phi ws up --env dev --config docker`
 
-### Run Airflow
+### Run Airflow locally
 
 1. Set `airflow_enabled = True` in [workspace/settings.py](workspace/settings.py) and run `phi ws up`
 2. Check out the airflow webserver running in the `airflow-ws-container`:
@@ -80,27 +79,33 @@ Running `phi ws up` is equivalent to running `phi ws up --env dev --config docke
 - user: `admin`
 - pass: `admin`
 
-### Superset webserver
+### Run Jupyter locally
 
-1. Set `superset_enabled = True` in [workspace/settings.py](workspace/settings.py) and run `phi ws up`
-2. Check out the superset webserver running in the `superset-ws-container`:
+1. Set `jupyter_enabled = True` in [workspace/settings.py](workspace/settings.py) and run `phi ws up`
+2. Check out jupyterlab running in the `jupyter-container`:
 
-- url: `http://localhost:8410/`
-- user: `admin`
+- url: `http://localhost:8888/`
 - pass: `admin`
 
-### Format + lint workspace
+### Validate workspace
 
-Format with `black` & lint with `mypy` using:
+Validate the workspace using: `./scripts/validate.sh`
+
+This script will:
+
+1. Format using black
+2. Type check using mypy
+3. Test using pytest
+4. Lint using ruff
 
 ```sh
-./scripts/format.sh
+./scripts/validate.sh
 ```
 
 If you need to install packages, run:
 
 ```sh
-pip install black mypy
+pip install black[jupyter] mypy pytest ruff
 ```
 
 ### Upgrading phidata version
@@ -133,12 +138,6 @@ This will:
 2. Install python project in `--editable` mode
 3. Install `requirements-airflow.txt` without dependencies for code completion
 
-This enables:
-
-1. Running `black` & `mypy` locally
-2. Running workflows locally
-3. Editor auto-completion
-
 ### Add python packages
 
 Following [PEP-631](https://peps.python.org/pep-0631/), we should add dependencies to the [pyproject.toml](pyproject.toml) file.
@@ -159,17 +158,6 @@ To add new airflow providers:
 1. Add the module to the [workspace/dev/airflow_resources/requirements-airflow.txt](/workspace/dev/airflow_resources/requirements-airflow.txt) file.
 2. _Optional: Run: `./scripts/install.sh` to install the new dependencies in a local virtual env._
 3. Run `CACHE=f phi ws up --name airflow` to recreate images + containers
-
-### To force recreate all images & containers, use the `CACHE` env variable
-
-```sh
-CACHE=false phi ws up \
-  --env dev \
-  --config docker \
-  --type image|container \
-  --name airflow|superset|pg \
-  --app airflow|superset
-```
 
 ### Shut down workspace
 
@@ -260,7 +248,7 @@ source ~/.venvs/dpenv/bin/activate
 
 echo "*- Install phi"
 pip install phidata
-phi init -r
+phi init -r -l
 
 echo "*- Setup + deploying workspace"
 phi ws setup
