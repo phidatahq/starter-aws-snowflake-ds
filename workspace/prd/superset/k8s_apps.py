@@ -80,7 +80,7 @@ db_user = (
     else prd_superset_db.get_db_user()
 )
 db_password = (
-    prd_superset_rds_db.get_master_password()
+    prd_superset_rds_db.get_master_user_password()
     if use_rds
     else prd_superset_db.get_db_password()
 )

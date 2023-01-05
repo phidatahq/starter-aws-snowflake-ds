@@ -25,9 +25,9 @@ from workspace.settings import (
 # Prevents deletion when running `phi ws down`
 aws_skip_delete: bool = False
 # Use RDS as database instead of running postgres on k8s
-use_rds: bool = False
+use_rds: bool = True
 # Use ElastiCache as cache instead of running redis on k8s
-use_elasticache: bool = False
+use_elasticache: bool = True
 
 # -*- EbsVolumes for airflow database and cache
 # NOTE: For production, use RDS and ElastiCache instead of running postgres/redis on k8s.
