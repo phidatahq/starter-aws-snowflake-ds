@@ -13,8 +13,12 @@ from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
 
 from workspace.prd.superset.aws_resources import (
+    use_rds,
+    use_elasticache,
+    prd_superset_rds_db,
     prd_superset_db_volume,
     prd_superset_redis_volume,
+    prd_superset_redis_cluster,
 )
 from workspace.prd.aws_resources import (
     services_ng_label,
@@ -51,7 +55,7 @@ prd_superset_secrets_file: Path = ws_dir_path.joinpath(
     "secrets/prd_superset_secrets.yml"
 )
 
-# Superset db: A postgres instance to use as the database for superset
+# -*- Superset db: A postgres instance to use as the database for superset
 prd_superset_db = PostgresDb(
     name="ss-db",
     volume_type=PostgresVolumeType.AWS_EBS,
@@ -60,7 +64,7 @@ prd_superset_db = PostgresDb(
     pod_node_selector=services_ng_label,
 )
 
-# Superset redis: A redis instance to use as the celery backend for superset
+# -*- Superset redis: A redis instance to use as the celery backend for superset
 prd_superset_redis = Redis(
     name="ss-redis",
     volume_type=RedisVolumeType.AWS_EBS,
@@ -69,15 +73,53 @@ prd_superset_redis = Redis(
     pod_node_selector=services_ng_label,
 )
 
-# Superset webserver
+# -*- Database configuration
+db_user = (
+    prd_superset_rds_db.get_master_username()
+    if use_rds
+    else prd_superset_db.get_db_user()
+)
+db_password = (
+    prd_superset_rds_db.get_master_password()
+    if use_rds
+    else prd_superset_db.get_db_password()
+)
+db_schema = (
+    prd_superset_rds_db.get_db_name() if use_rds else prd_superset_db.get_db_schema()
+)
+db_dialect = "postgresql"
+# NOTE: Add DATABASE_HOST & DATABASE_PORT env variables to secrets for RDS
+db_host = None if use_rds else prd_superset_db.get_db_host_k8s()
+db_port = None if use_rds else prd_superset_db.get_db_port_k8s()
+
+# -*- Redis configuration
+redis_password = (
+    prd_superset_redis_cluster.get_auth_token()
+    if use_elasticache
+    else prd_superset_redis.get_db_password()
+)
+redis_driver = "rediss" if redis_password else "redis"
+# NOTE: Add REDIS_HOST & REDIS_PORT env variables to secrets
+redis_host = None if use_elasticache else prd_superset_redis.get_db_host_k8s()
+redis_port = None if use_elasticache else prd_superset_redis.get_db_port_k8s()
+
+# -*- Superset webserver
 prd_superset_ws = SupersetWebserver(
     replicas=2,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
-    db_app=prd_superset_db,
     wait_for_db=wait_for_db,
-    redis_app=prd_superset_redis,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_dialect=db_dialect,
+    db_host=db_host,
+    db_port=db_port,
     wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -92,16 +134,24 @@ prd_superset_ws = SupersetWebserver(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-# Superset init
+# -*- Superset init
 superset_init_enabled = True  # Mark as False after first run
 prd_superset_init = SupersetInit(
     enabled=(superset_enabled and superset_init_enabled),
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
-    db_app=prd_superset_db,
     wait_for_db=wait_for_db,
-    redis_app=prd_superset_redis,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_dialect=db_dialect,
+    db_host=db_host,
+    db_port=db_port,
     wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -116,15 +166,23 @@ prd_superset_init = SupersetInit(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-# Superset worker
+# -*- Superset worker
 prd_superset_worker = SupersetWorker(
     replicas=1,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
-    db_app=prd_superset_db,
     wait_for_db=wait_for_db,
-    redis_app=prd_superset_redis,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_dialect=db_dialect,
+    db_host=db_host,
+    db_port=db_port,
     wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
@@ -139,15 +197,23 @@ prd_superset_worker = SupersetWorker(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-# Superset worker beat
+# -*- Superset worker beat
 prd_superset_worker_beat = SupersetWorkerBeat(
     replicas=1,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
-    db_app=prd_superset_db,
     wait_for_db=wait_for_db,
-    redis_app=prd_superset_redis,
+    db_user=db_user,
+    db_password=db_password,
+    db_schema=db_schema,
+    db_dialect=db_dialect,
+    db_host=db_host,
+    db_port=db_port,
     wait_for_redis=wait_for_redis,
+    redis_password=redis_password,
+    redis_driver=redis_driver,
+    redis_host=redis_host,
+    redis_port=redis_port,
     mount_workspace=mount_workspace,
     create_git_sync_sidecar=True,
     git_sync_repo=ws_repo,
