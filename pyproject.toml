@@ -13,7 +13,7 @@ dependencies = [
     "mypy",
     "numpy",
     "pandas",
-    "phidata>=0.4.9",
+    "phidata>=0.4.10",
     "pre-commit",
     "prophet",
     "pytest",

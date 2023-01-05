@@ -140,22 +140,22 @@ PUBLIC_ROLE_LIKE = "Gamma"
 
 # Enable Google and Github OAuth
 OAUTH_PROVIDERS = [
-    {
-        "name": "google",
-        "icon": "fa-google",
-        "token_key": "access_token",
-        "remote_app": {
-            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-            "api_base_url": "https://www.googleapis.com/oauth2/v2/",
-            "client_kwargs": {"scope": "email profile"},
-            "request_token_url": None,
-            "access_token_url": "https://accounts.google.com/o/oauth2/token",
-            "authorize_url": "https://accounts.google.com/o/oauth2/auth",
-            "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
-        },
-        # "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
-    },
+    # {
+    #     "name": "google",
+    #     "icon": "fa-google",
+    #     "token_key": "access_token",
+    #     "remote_app": {
+    #         "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+    #         "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+    #         "api_base_url": "https://www.googleapis.com/oauth2/v2/",
+    #         "client_kwargs": {"scope": "email profile"},
+    #         "request_token_url": None,
+    #         "access_token_url": "https://accounts.google.com/o/oauth2/token",
+    #         "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+    #         "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
+    #     },
+    #     # "whitelist": ["@{}".format(os.getenv("GOOGLE_DOMAIN"))],
+    # },
     {
         "name": "github",
         "icon": "fa-github",

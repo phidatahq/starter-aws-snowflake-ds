@@ -17,7 +17,7 @@ prd_images = []
 
 # -*- Settings
 image_tag = "prd"
-image_repo = "phidata"  # Set your image repo
+image_repo = getenv("IMAGE_REPO", "phidata")  # Set your image repo
 image_suffix = "starter-aws-snowflake-ds"  # Set your image name suffix
 skip_docker_cache = False  # Skip docker cache when building images
 pull_docker_images = False  # Force pull images during FROM
