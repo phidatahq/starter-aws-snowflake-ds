@@ -3,10 +3,12 @@ from phidata.infra.aws.resource.s3.bucket import S3Bucket
 
 from workspace.settings import dev_key
 
+#
 # -*- AWS resources
+#
 
-# skip_delete = True means resources will not be deleted on `phi ws down`
-# Used in production to prevent accidental deletes
+# -*- Settings
+# Prevents deletion when running `phi ws down`
 aws_skip_delete: bool = False
 
 # -*- S3 buckets

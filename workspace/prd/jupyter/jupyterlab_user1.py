@@ -1,6 +1,6 @@
+from phidata.app.group import AppGroup
 from phidata.app.jupyter import ImagePullPolicy, JupyterLab
-from phidata.infra.aws.resource.ec2.volume import EbsVolume
-from phidata.infra.aws.resource.group import AwsResourceGroup
+from phidata.infra.aws.resource.group import AwsResourceGroup, EbsVolume
 
 from workspace.prd.aws_resources import (
     topology_spread_key,
@@ -18,15 +18,18 @@ from workspace.settings import (
     ws_dir_path,
 )
 
-# -*- AWS resources
-
-# Shared aws settings
+# -*- Settings
+user_name: str = "user1"
+# Prevents deletion of aws resources when running `phi ws down`
 aws_skip_delete: bool = False
 
+#
+# -*- AWS resources
+#
 # -*- EbsVolumes
 # EbsVolume for jupyter
 prd_jupyter_ebs_volume = EbsVolume(
-    name=f"jupyter-{prd_key}",
+    name=f"jupyter-{user_name}-{prd_key}",
     size=16,
     availability_zone=aws_az_1a,
     tags=prd_tags,
@@ -34,15 +37,17 @@ prd_jupyter_ebs_volume = EbsVolume(
 )
 
 prd_jupyter_aws_resources = AwsResourceGroup(
-    name=f"jupyter-{prd_key}",
+    name=f"jupyterlab-{user_name}",
     enabled=jupyter_enabled,
     volumes=[prd_jupyter_ebs_volume],
 )
-# -*- Kubernetes resources
 
+#
+# -*- Kubernetes resources
+#
 # JupyterLab
 prd_jupyter = JupyterLab(
-    enabled=jupyter_enabled,
+    name=f"jupyterlab-{user_name}",
     image_name=prd_jupyter_image.name,
     image_tag=prd_jupyter_image.tag,
     mount_ebs_volume=True,
@@ -61,4 +66,8 @@ prd_jupyter = JupyterLab(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-prd_jupyter_apps = [prd_jupyter]
+prd_jupyter_apps = AppGroup(
+    name=f"jupyterlab-{user_name}",
+    enabled=jupyter_enabled,
+    apps=[prd_jupyter],
+)

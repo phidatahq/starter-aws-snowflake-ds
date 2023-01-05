@@ -67,8 +67,8 @@ pandas==1.5.2
 parso==0.8.3
 pathspec==0.9.0
 pexpect==4.8.0
-phidata==0.4.6
-phiterm==0.4.6
+phidata==0.4.9
+phiterm==0.4.9
 pickleshare==0.7.5
 pillow==9.4.0
 platformdirs==2.6.2

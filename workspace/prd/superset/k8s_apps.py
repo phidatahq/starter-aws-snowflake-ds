@@ -1,16 +1,20 @@
 from pathlib import Path
+from typing import Dict
 
-from phidata.app.postgres import PostgresDb, PostgresVolumeType
-from phidata.app.redis import Redis, RedisVolumeType
 from phidata.app.superset import (
     SupersetInit,
     SupersetWebserver,
     SupersetWorker,
     SupersetWorkerBeat,
 )
-from phidata.infra.aws.resource.ec2.volume import EbsVolume
-from phidata.infra.aws.resource.group import AwsResourceGroup
+from phidata.app.group import AppGroup
+from phidata.app.postgres import PostgresDb, PostgresVolumeType
+from phidata.app.redis import Redis, RedisVolumeType
 
+from workspace.prd.superset.aws_resources import (
+    prd_superset_db_volume,
+    prd_superset_redis_volume,
+)
 from workspace.prd.aws_resources import (
     services_ng_label,
     topology_spread_key,
@@ -20,47 +24,17 @@ from workspace.prd.aws_resources import (
 )
 from workspace.prd.images import prd_superset_image
 from workspace.settings import (
-    aws_az_1a,
-    prd_key,
-    prd_tags,
     superset_enabled,
     use_cache,
     ws_dir_path,
     ws_repo,
 )
 
-# -*- AWS resources
-
-# Shared aws settings
-aws_skip_delete: bool = False
-
-# -*- EbsVolumes
-# EbsVolume for superset-db
-prd_superset_db_volume = EbsVolume(
-    name=f"superset-db-{prd_key}",
-    size=16,
-    availability_zone=aws_az_1a,
-    tags=prd_tags,
-    skip_delete=aws_skip_delete,
-)
-# EbsVolume for superset-redis
-prd_superset_redis_volume = EbsVolume(
-    name=f"superset-redis-{prd_key}",
-    size=8,
-    availability_zone=aws_az_1a,
-    tags=prd_tags,
-    skip_delete=aws_skip_delete,
-)
-
-prd_superset_aws_resources = AwsResourceGroup(
-    name=f"superset-{prd_key}",
-    enabled=superset_enabled,
-    volumes=[prd_superset_db_volume, prd_superset_redis_volume],
-)
-
+#
 # -*- Kubernetes resources
+#
 
-# Shared k8s settings
+# -*- Settings
 # waits for superset-db to be ready before starting app
 wait_for_db: bool = True
 # waits for superset-redis to be ready before starting app
@@ -79,7 +53,6 @@ prd_superset_secrets_file: Path = ws_dir_path.joinpath(
 # Superset db: A postgres instance to use as the database for superset
 prd_superset_db = PostgresDb(
     name="ss-db",
-    enabled=superset_enabled,
     volume_type=PostgresVolumeType.AWS_EBS,
     ebs_volume=prd_superset_db_volume,
     secrets_file=ws_dir_path.joinpath("secrets/prd_superset_db_secrets.yml"),
@@ -89,7 +62,6 @@ prd_superset_db = PostgresDb(
 # Superset redis: A redis instance to use as the celery backend for superset
 prd_superset_redis = Redis(
     name="ss-redis",
-    enabled=superset_enabled,
     volume_type=RedisVolumeType.AWS_EBS,
     ebs_volume=prd_superset_redis_volume,
     command=["redis-server", "--save", "60", "1"],
@@ -99,7 +71,6 @@ prd_superset_redis = Redis(
 # Superset webserver
 prd_superset_ws = SupersetWebserver(
     replicas=2,
-    enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
     db_app=prd_superset_db,
@@ -145,7 +116,6 @@ prd_superset_init = SupersetInit(
 # Superset worker
 prd_superset_worker = SupersetWorker(
     replicas=1,
-    enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
     db_app=prd_superset_db,
@@ -168,7 +138,6 @@ prd_superset_worker = SupersetWorker(
 # Superset worker beat
 prd_superset_worker_beat = SupersetWorkerBeat(
     replicas=1,
-    enabled=superset_enabled,
     image_name=prd_superset_image.name,
     image_tag=prd_superset_image.tag,
     db_app=prd_superset_db,
@@ -188,11 +157,15 @@ prd_superset_worker_beat = SupersetWorkerBeat(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-prd_superset_apps = [
-    prd_superset_db,
-    prd_superset_redis,
-    prd_superset_ws,
-    prd_superset_init,
-    prd_superset_worker,
-    prd_superset_worker_beat,
-]
+prd_superset_apps = AppGroup(
+    name="superset",
+    enabled=superset_enabled,
+    apps=[
+        prd_superset_db,
+        prd_superset_redis,
+        prd_superset_ws,
+        prd_superset_init,
+        prd_superset_worker,
+        prd_superset_worker_beat,
+    ],
+)

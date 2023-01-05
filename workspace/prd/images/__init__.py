@@ -1,3 +1,4 @@
+from os import getenv
 from phidata.infra.docker.resource.image import DockerImage
 
 from workspace.settings import (
@@ -8,19 +9,21 @@ from workspace.settings import (
     use_cache,
 )
 
-# -*- Prd images
+#
+# -*- Production container images
+#
 
 prd_images = []
 
-# Shared image params
+# -*- Settings
 image_tag = "prd"
-image_repo = "386435111151.dkr.ecr.us-east-1.amazonaws.com"  # Set your image repo
+image_repo = "phidata"  # Set your image repo
 image_suffix = "starter-aws-snowflake-ds"  # Set your image name suffix
 skip_docker_cache = False  # Skip docker cache when building images
 pull_docker_images = False  # Force pull images during FROM
 push_docker_images = True  # Push images to repo after building
 
-# Airflow image
+# -*- Airflow image
 prd_airflow_image = DockerImage(
     name=f"{image_repo}/airflow-{image_suffix}",
     tag=image_tag,
@@ -30,15 +33,13 @@ prd_airflow_image = DockerImage(
     pull=pull_docker_images,
     push_image=push_docker_images,
     skip_docker_cache=skip_docker_cache,
-    # use_cache=False will recreate the image every time you run `phi ws up`
-    # eg: `CACHE=f phi ws up`
     use_cache=use_cache,
 )
 
 if airflow_enabled:
     prd_images.append(prd_airflow_image)
 
-# Superset image
+# -*- Superset image
 prd_superset_image = DockerImage(
     name=f"{image_repo}/superset-{image_suffix}",
     tag=image_tag,
@@ -54,7 +55,7 @@ prd_superset_image = DockerImage(
 if superset_enabled:
     prd_images.append(prd_superset_image)
 
-# Jupyter image
+# -*- Jupyter image
 prd_jupyter_image = DockerImage(
     name=f"{image_repo}/jupyter-{image_suffix}",
     tag=image_tag,

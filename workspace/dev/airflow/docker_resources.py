@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict
 
 from phidata.app.airflow import AirflowScheduler, AirflowWebserver, AirflowWorker
+from phidata.app.group import AppGroup
 from phidata.app.postgres import PostgresDb
 from phidata.app.redis import Redis
 
@@ -15,12 +16,13 @@ from workspace.settings import (
     ws_name,
 )
 
+#
 # -*- Docker resources
+#
 
 # Airflow db: A postgres instance to use as the database for airflow
 dev_airflow_db = PostgresDb(
     name=f"airflow-db-{ws_name}",
-    enabled=airflow_enabled,
     db_user="airflow",
     db_password="airflow",
     db_schema="airflow",
@@ -31,12 +33,11 @@ dev_airflow_db = PostgresDb(
 # Airflow redis: A redis instance to use as the celery backend for airflow
 dev_airflow_redis = Redis(
     name=f"airflow-redis-{ws_name}",
-    enabled=airflow_enabled,
     command=["redis-server", "--save", "60", "1"],
     container_host_port=8321,
 )
 
-# Shared settings
+# -*- Settings
 # waits for airflow-db to be ready before starting app
 wait_for_db: bool = True
 # waits for airflow-redis to be ready before starting app
@@ -58,12 +59,11 @@ dev_airflow_env: Dict[str, str] = {
     "AWS_DEFAULT_REGION": aws_region,
     "AIRFLOW_CONN_AWS_DEFAULT": "aws://",
     # Airflow Navbar color
-    "AIRFLOW__WEBSERVER__NAVBAR_COLOR": "#7dd3fc",
+    "AIRFLOW__WEBSERVER__NAVBAR_COLOR": "#bbf7d0",
 }
 
 # Airflow webserver
 dev_airflow_ws = AirflowWebserver(
-    enabled=airflow_enabled,
     image_name=dev_airflow_image.name,
     image_tag=dev_airflow_image.tag,
     db_app=dev_airflow_db,
@@ -94,7 +94,6 @@ dev_airflow_ws = AirflowWebserver(
 
 # Airflow scheduler
 dev_airflow_scheduler = AirflowScheduler(
-    enabled=airflow_enabled,
     image_name=dev_airflow_image.name,
     image_tag=dev_airflow_image.tag,
     db_app=dev_airflow_db,
@@ -139,10 +138,14 @@ dev_airflow_worker = AirflowWorker(
     wait_for_db_init=True,
 )
 
-dev_airflow_apps = [
-    dev_airflow_db,
-    dev_airflow_redis,
-    dev_airflow_ws,
-    dev_airflow_scheduler,
-    dev_airflow_worker,
-]
+dev_airflow_apps = AppGroup(
+    name="airflow",
+    enabled=airflow_enabled,
+    apps=[
+        dev_airflow_db,
+        dev_airflow_redis,
+        dev_airflow_ws,
+        dev_airflow_scheduler,
+        dev_airflow_worker,
+    ],
+)

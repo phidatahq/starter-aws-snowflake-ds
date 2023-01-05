@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from phidata.app.group import AppGroup
 from phidata.app.postgres import PostgresDb
 from phidata.app.redis import Redis
 from phidata.app.superset import SupersetInit, SupersetWebserver
@@ -7,7 +8,9 @@ from phidata.app.superset import SupersetInit, SupersetWebserver
 from workspace.dev.images import dev_superset_image
 from workspace.settings import superset_enabled, use_cache, ws_dir_path, ws_name
 
+#
 # -*- Docker resources
+#
 
 # Superset db: A postgres instance to use as the database for superset
 dev_superset_db = PostgresDb(
@@ -28,7 +31,7 @@ dev_superset_redis = Redis(
     container_host_port=6449,
 )
 
-# Shared settings
+# -*- Settings
 # waits for superset-db to be ready before starting app
 wait_for_db: bool = True
 # waits for superset-redis to be ready before starting app
@@ -45,7 +48,6 @@ dev_superset_secrets_file: Path = ws_dir_path.joinpath(
 
 # Superset webserver
 dev_superset_ws = SupersetWebserver(
-    enabled=superset_enabled,
     image_name=dev_superset_image.name,
     image_tag=dev_superset_image.tag,
     db_app=dev_superset_db,
@@ -72,7 +74,7 @@ dev_superset_ws = SupersetWebserver(
 # Superset init
 superset_init_enabled = True  # Mark as False after first run
 dev_superset_init = SupersetInit(
-    enabled=(superset_enabled and superset_init_enabled),
+    enabled=superset_init_enabled,
     image_name=dev_superset_image.name,
     image_tag=dev_superset_image.tag,
     db_app=dev_superset_db,
@@ -87,9 +89,14 @@ dev_superset_init = SupersetInit(
     load_examples=False,
 )
 
-dev_superset_apps = [
-    dev_superset_db,
-    dev_superset_redis,
-    dev_superset_ws,
-    dev_superset_init,
-]
+
+dev_superset_apps = AppGroup(
+    name="superset",
+    enabled=superset_enabled,
+    apps=[
+        dev_superset_db,
+        dev_superset_redis,
+        dev_superset_ws,
+        dev_superset_init,
+    ],
+)

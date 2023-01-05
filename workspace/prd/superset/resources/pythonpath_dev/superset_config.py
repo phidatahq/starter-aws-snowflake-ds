@@ -127,7 +127,7 @@ AUTH_USER_REGISTRATION_ROLE = "Public"
 AUTH_ROLES_SYNC_AT_LOGIN = True
 # A mapping from the values of `userinfo["role_keys"]` to a list of FAB roles
 AUTH_ROLES_MAPPING = {
-    "Alpha": ["Alpha"],
+    "User": ["Alpha"],
     "Admin": ["Admin"],
 }
 

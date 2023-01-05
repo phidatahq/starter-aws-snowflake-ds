@@ -8,11 +8,13 @@ from workspace.settings import (
     use_cache,
 )
 
-# -*- Dev images
+#
+# -*- Dev container images
+#
 
 dev_images = []
 
-# Shared image params
+# -*- Settings
 image_tag = "dev"
 image_repo = "phidata"  # Set your image repo
 image_suffix = "starter-aws-snowflake-ds"  # Set your image name suffix
@@ -20,7 +22,7 @@ skip_docker_cache = False  # Skip docker cache when building images
 pull_docker_images = False  # Force pull images during FROM
 push_docker_images = True  # Push images to repo after building
 
-# Airflow image
+# -*- Airflow image
 dev_airflow_image = DockerImage(
     name=f"{image_repo}/airflow-{image_suffix}",
     tag=image_tag,
@@ -38,7 +40,7 @@ dev_airflow_image = DockerImage(
 if airflow_enabled:
     dev_images.append(dev_airflow_image)
 
-# Jupyter image
+# -*- Jupyter image
 dev_jupyter_image = DockerImage(
     name=f"{image_repo}/jupyter-{image_suffix}",
     tag=image_tag,
@@ -54,7 +56,7 @@ dev_jupyter_image = DockerImage(
 if jupyter_enabled:
     dev_images.append(dev_jupyter_image)
 
-# Superset image
+# -*- Superset image
 dev_superset_image = DockerImage(
     name=f"{image_repo}/superset-{image_suffix}",
     tag=image_tag,

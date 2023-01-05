@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from phidata.utils.env_var import env_var_is_true
 
@@ -7,7 +7,7 @@ from phidata.utils.env_var import env_var_is_true
 # -*- Workspace settings
 #
 # Workspace name: used for naming cloud resources
-ws_name: str = "starter-aws-snowflake-ds"
+ws_name: str = "dp004"
 # Workspace git repo url: used to git-sync DAGs and Charts
 ws_repo: str = "https://github.com/phidatahq/starter-aws-snowflake-ds.git"
 # Path to the workspace directory
@@ -60,6 +60,8 @@ private_subnets: List[str] = [
     "subnet-0964a2e70b7289ee5",
     "subnet-0c2587701e140e69e",
 ]
+# Security Groups
+security_groups: Optional[List[str]] = None
 
 #
 # -*- Settings from environment variables. Set these in .env file.

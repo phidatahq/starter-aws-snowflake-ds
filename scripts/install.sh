@@ -29,7 +29,7 @@ main() {
 
   print_heading "Installing airflow requirements without dependencies for code completion"
   pip install --no-deps \
-    -r ${REPO_ROOT}/workspace/dev/airflow_resources/requirements-airflow.txt
+    -r ${REPO_ROOT}/workspace/dev/airflow/resources/requirements-airflow.txt
 }
 
 main "$@"

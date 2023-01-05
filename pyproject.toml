@@ -13,7 +13,7 @@ dependencies = [
     "mypy",
     "numpy",
     "pandas",
-    "phidata>=0.4.6",
+    "phidata>=0.4.9",
     "pre-commit",
     "prophet",
     "pytest",
@@ -60,12 +60,12 @@ ignore = ["F401"]
 exclude = [
     "dpenv*",
     "dpenvdev*",
-    "workspace/dev/airflow_resources/*",
-    "workspace/prd/airflow_resources/*",
-    "workspace/dev/superset_resources/*",
-    "workspace/prd/superset_resources/*",
-    "workspace/dev/jupyter_resources/*",
-    "workspace/prd/jupyter_resources/*",
+    "workspace/dev/airflow/resources/*",
+    "workspace/prd/airflow/resources/*",
+    "workspace/dev/superset/resources/*",
+    "workspace/prd/superset/resources/*",
+    "workspace/dev/jupyter/resources/*",
+    "workspace/prd/jupyter/resources/*",
 ]
 
 [tool.mypy]
@@ -76,12 +76,12 @@ warn_unused_configs = true
 exclude = [
     "dpenv*",
     "dpenvdev*",
-    "workspace/dev/airflow_resources/*",
-    "workspace/prd/airflow_resources/*",
-    "workspace/dev/superset_resources/*",
-    "workspace/prd/superset_resources/*",
-    "workspace/dev/jupyter_resources/*",
-    "workspace/prd/jupyter_resources/*",
+    "workspace/dev/airflow/resources/*",
+    "workspace/prd/airflow/resources/*",
+    "workspace/dev/superset/resources/*",
+    "workspace/prd/superset/resources/*",
+    "workspace/dev/jupyter/resources/*",
+    "workspace/prd/jupyter/resources/*",
 ]
 
 [[tool.mypy.overrides]]

@@ -8,11 +8,14 @@ from phidata.app.airflow import (
     AirflowWorker,
     ImagePullPolicy,
 )
+from phidata.app.group import AppGroup
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
 from phidata.app.redis import Redis, RedisVolumeType
-from phidata.infra.aws.resource.ec2.volume import EbsVolume
-from phidata.infra.aws.resource.group import AwsResourceGroup
 
+from workspace.prd.airflow.aws_resources import (
+    prd_airflow_db_volume,
+    prd_airflow_redis_volume,
+)
 from workspace.prd.aws_resources import (
     prd_logs_s3_bucket,
     services_ng_label,
@@ -25,48 +28,18 @@ from workspace.prd.images import prd_airflow_image
 from workspace.prd.pg_dbs import prd_db_airflow_connections
 from workspace.settings import (
     airflow_enabled,
-    aws_az_1a,
     aws_region,
     prd_domain,
-    prd_key,
-    prd_tags,
     use_cache,
     ws_dir_path,
     ws_repo,
 )
 
-# -*- AWS resources
-
-# Shared aws settings
-aws_skip_delete: bool = False
-
-# -*- EbsVolumes
-# EbsVolume for airflow-db
-prd_airflow_db_volume = EbsVolume(
-    name=f"airflow-db-{prd_key}",
-    size=32,
-    availability_zone=aws_az_1a,
-    tags=prd_tags,
-    skip_delete=aws_skip_delete,
-)
-# EbsVolume for airflow-redis
-prd_airflow_redis_volume = EbsVolume(
-    name=f"airflow-redis-{prd_key}",
-    size=16,
-    availability_zone=aws_az_1a,
-    tags=prd_tags,
-    skip_delete=aws_skip_delete,
-)
-
-prd_airflow_aws_resources = AwsResourceGroup(
-    name=f"airflow-{prd_key}",
-    enabled=airflow_enabled,
-    volumes=[prd_airflow_db_volume, prd_airflow_redis_volume],
-)
-
+#
 # -*- Kubernetes resources
+#
 
-# Shared settings
+# -*- Settings
 # waits for airflow-db to be ready before starting app
 wait_for_db: bool = True
 # waits for airflow-redis to be ready before starting app
@@ -97,10 +70,9 @@ prd_airflow_env: Dict[str, str] = {
     "AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID": "aws_default",
 }
 
-# Airflow db: A poprdres instance to use as the database for airflow
+# Airflow db: A postres instance to use as the database for airflow
 prd_airflow_db = PostgresDb(
     name="af-db",
-    enabled=airflow_enabled,
     volume_type=PostgresVolumeType.AWS_EBS,
     ebs_volume=prd_airflow_db_volume,
     secrets_file=ws_dir_path.joinpath("secrets/prd_airflow_db_secrets.yml"),
@@ -110,7 +82,6 @@ prd_airflow_db = PostgresDb(
 # Airflow redis: A redis instance to use as the celery backend for airflow
 prd_airflow_redis = Redis(
     name="af-redis",
-    enabled=airflow_enabled,
     volume_type=RedisVolumeType.AWS_EBS,
     ebs_volume=prd_airflow_redis_volume,
     command=["redis-server", "--save", "60", "1"],
@@ -120,7 +91,6 @@ prd_airflow_redis = Redis(
 # Airflow webserver
 prd_airflow_ws = AirflowWebserver(
     replicas=2,
-    enabled=airflow_enabled,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
     db_app=prd_airflow_db,
@@ -136,6 +106,7 @@ prd_airflow_ws = AirflowWebserver(
     env_file=prd_airflow_env_file,
     db_connections=prd_db_airflow_connections,
     secrets_file=prd_airflow_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=services_ng_label,
     topology_spread_key=topology_spread_key,
@@ -144,13 +115,11 @@ prd_airflow_ws = AirflowWebserver(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
-    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 # Airflow scheduler
 prd_airflow_scheduler = AirflowScheduler(
     replicas=2,
-    enabled=airflow_enabled,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
     db_app=prd_airflow_db,
@@ -166,6 +135,7 @@ prd_airflow_scheduler = AirflowScheduler(
     env_file=prd_airflow_env_file,
     db_connections=prd_db_airflow_connections,
     secrets_file=prd_airflow_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=services_ng_label,
     topology_spread_key=topology_spread_key,
@@ -176,15 +146,13 @@ prd_airflow_scheduler = AirflowScheduler(
     init_airflow_db=True,
     # Upgrade the airflow db on container start -- mark as false after first run
     upgrade_airflow_db=True,
-    # Creates airflow user: admin, pass: admin -- mark as false after first run
+    # Creates airflow user: admin, pass: admin -- mark as false after first run or when using oauth
     create_airflow_admin_user=True,
-    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 # Airflow worker queue
 prd_airflow_worker = AirflowWorker(
     replicas=2,
-    enabled=airflow_enabled,
     queue_name="default,tier_1",
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
@@ -201,6 +169,7 @@ prd_airflow_worker = AirflowWorker(
     env_file=prd_airflow_env_file,
     db_connections=prd_db_airflow_connections,
     secrets_file=prd_airflow_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=workers_ng_label,
     topology_spread_key=topology_spread_key,
@@ -209,14 +178,12 @@ prd_airflow_worker = AirflowWorker(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
-    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
 
 # Airflow flower
 prd_airflow_flower = AirflowFlower(
     replicas=1,
-    enabled=airflow_enabled,
     image_name=prd_airflow_image.name,
     image_tag=prd_airflow_image.tag,
     db_app=prd_airflow_db,
@@ -232,6 +199,7 @@ prd_airflow_flower = AirflowFlower(
     env_file=prd_airflow_env_file,
     db_connections=prd_db_airflow_connections,
     secrets_file=prd_airflow_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=services_ng_label,
     topology_spread_key=topology_spread_key,
@@ -240,14 +208,17 @@ prd_airflow_flower = AirflowFlower(
     # Settings to mark as false after first run
     # Wait for scheduler to initialize airflow db -- mark as false after first run
     wait_for_db_init=True,
-    image_pull_policy=ImagePullPolicy.ALWAYS,
 )
 
-prd_airflow_apps = [
-    prd_airflow_db,
-    prd_airflow_redis,
-    prd_airflow_ws,
-    prd_airflow_scheduler,
-    prd_airflow_worker,
-    prd_airflow_flower,
-]
+prd_airflow_apps = AppGroup(
+    name="airflow",
+    enabled=airflow_enabled,
+    apps=[
+        prd_airflow_db,
+        prd_airflow_redis,
+        prd_airflow_ws,
+        prd_airflow_scheduler,
+        prd_airflow_worker,
+        prd_airflow_flower,
+    ],
+)

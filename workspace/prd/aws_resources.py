@@ -1,10 +1,12 @@
-from phidata.infra.aws.resource.acm.certificate import AcmCertificate
-from phidata.infra.aws.resource.cloudformation.stack import CloudFormationStack
-from phidata.infra.aws.resource.eks.cluster import EksCluster
-from phidata.infra.aws.resource.eks.kubeconfig import EksKubeconfig
-from phidata.infra.aws.resource.eks.node_group import EksNodeGroup
-from phidata.infra.aws.resource.group import AwsResourceGroup
-from phidata.infra.aws.resource.s3.bucket import S3Bucket
+from phidata.infra.aws.resource.group import (
+    AcmCertificate,
+    CloudFormationStack,
+    EksCluster,
+    EksKubeconfig,
+    EksNodeGroup,
+    AwsResourceGroup,
+    S3Bucket,
+)
 from typing_extensions import Literal
 
 from workspace.settings import (
@@ -15,10 +17,12 @@ from workspace.settings import (
     ws_dir_path,
 )
 
+#
 # -*- AWS resources
+#
 
-# When skip_delete = True, resources will not be deleted on `phi ws down --env prd`.
-# Used this setting in production to prevent accidental deletes.
+# -*- Settings
+# Prevents deletion when running `phi ws down`
 aws_skip_delete: bool = False
 
 # -*- S3 buckets
@@ -86,7 +90,7 @@ prd_services_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5a.large"],
+    instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
     # Add the services label to the nodegroup
     labels=services_ng_label,
@@ -101,7 +105,7 @@ prd_worker_eks_nodegroup = EksNodeGroup(
     max_size=5,
     desired_size=2,
     disk_size=64,
-    instance_types=["m5a.large"],
+    instance_types=["m5.large"],
     eks_cluster=prd_eks_cluster,
     # Add the workers label to the nodegroup
     labels=workers_ng_label,

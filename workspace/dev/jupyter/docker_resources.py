@@ -1,13 +1,15 @@
+from phidata.app.group import AppGroup
 from phidata.app.jupyter import JupyterLab
 
 from workspace.dev.images import dev_jupyter_image
 from workspace.settings import jupyter_enabled, use_cache, ws_dir_path
 
+#
 # -*- Docker resources
+#
 
 # JupyterLab: Run dev notebooks
 dev_jupyter = JupyterLab(
-    enabled=jupyter_enabled,
     image_name=dev_jupyter_image.name,
     image_tag=dev_jupyter_image.tag,
     mount_workspace=True,
@@ -27,4 +29,8 @@ dev_jupyter = JupyterLab(
     },
 )
 
-dev_jupyter_apps = [dev_jupyter]
+dev_jupyter_apps = AppGroup(
+    name="jupyterlab",
+    enabled=jupyter_enabled,
+    apps=[dev_jupyter],
+)

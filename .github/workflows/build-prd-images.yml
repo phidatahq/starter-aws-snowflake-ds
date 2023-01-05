@@ -31,7 +31,7 @@ jobs:
           file: workspace/prd/images/airflow.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: phidata/airflow-starter-aws-snowflake-ds:prd
+          tags: ${{ secrets.DOCKERHUB_REPO }}/airflow-starter-aws-snowflake-ds:prd
 
   build-superset-prd:
 
@@ -56,7 +56,7 @@ jobs:
           file: workspace/prd/images/superset.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: phidata/superset-starter-aws-snowflake-ds:prd
+          tags: ${{ secrets.DOCKERHUB_REPO }}/superset-starter-aws-snowflake-ds:prd
 
   build-jupyter-prd:
 
@@ -81,4 +81,4 @@ jobs:
           file: workspace/prd/images/jupyter.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: phidata/jupyter-starter-aws-snowflake-ds:prd
+          tags: ${{ secrets.DOCKERHUB_REPO }}/jupyter-starter-aws-snowflake-ds:prd

@@ -28,8 +28,10 @@ SQLALCHEMY_DATABASE_URI = conf.get("database", "SQL_ALCHEMY_CONN")
 # AUTH_REMOTE_USER : Is for using REMOTE_USER from web server
 # AUTH_OAUTH : Is for OAuth
 
-# Use OAUTH i.e. Google, Facebook, GitHub authentication
-AUTH_TYPE = AUTH_OAUTH
+# Dev: Use AUTH_DB i.e. user/pass authentication
+AUTH_TYPE = AUTH_DB
+# Production: Use OAUTH i.e. Google, Facebook, GitHub authentication
+# AUTH_TYPE = AUTH_OAUTH
 # Allow user self registration
 AUTH_USER_REGISTRATION = True
 # The default user self registration role
@@ -87,7 +89,7 @@ def get_roles_for_email(email: str) -> List[str]:
     All other users will be granted the "User" role.
     """
 
-    ADMIN_EMAILS = ["ashpreet@phidata.com"]
+    ADMIN_EMAILS: List[str] = []
     if email in ADMIN_EMAILS:
         return ["Admin"]
     else:

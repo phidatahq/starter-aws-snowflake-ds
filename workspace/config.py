@@ -7,7 +7,9 @@ from workspace.prd.docker_config import prd_docker_config
 from workspace.prd.k8s_config import prd_k8s_config
 from workspace.settings import aws_region, dev_env
 
+#
 # -*- Define workspace resources using the WorkspaceConfig
+#
 workspace = WorkspaceConfig(
     default_env=dev_env,
     default_config="docker",

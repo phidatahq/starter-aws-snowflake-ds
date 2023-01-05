@@ -1,7 +1,6 @@
+from phidata.app.group import AppGroup
 from phidata.app.traefik import IngressRoute, ServiceType
 
-from workspace.k8s.whoami import whoami_port, whoami_service
-from workspace.prd.airflow import prd_airflow_flower, prd_airflow_ws
 from workspace.prd.aws_resources import (
     prd_aws_dp_certificate,
     services_ng_label,
@@ -9,8 +8,10 @@ from workspace.prd.aws_resources import (
     topology_spread_max_skew,
     topology_spread_when_unsatisfiable,
 )
-from workspace.prd.jupyter import prd_jupyter
-from workspace.prd.superset import prd_superset_ws
+from workspace.prd.airflow.k8s_apps import prd_airflow_flower, prd_airflow_ws
+from workspace.prd.jupyter.jupyterlab_user1 import prd_jupyter as prd_jupyter_user1
+from workspace.prd.superset.k8s_apps import prd_superset_ws
+from workspace.k8s.whoami import whoami_port, whoami_service
 from workspace.settings import (
     airflow_enabled,
     jupyter_enabled,
@@ -21,8 +22,9 @@ from workspace.settings import (
     ws_dir_path,
 )
 
+#
 # -*- Kubernetes resources
-
+#
 # Traefik Ingress: For routing web requests within the EKS cluster
 routes = [
     {
@@ -80,12 +82,12 @@ if superset_enabled:
 if jupyter_enabled:
     routes.append(
         {
-            "match": f"Host(`jupyter.{prd_domain}`)",
+            "match": f"Host(`jupyterlab1.{prd_domain}`)",
             "kind": "Rule",
             "services": [
                 {
-                    "name": prd_jupyter.get_app_service_name(),
-                    "port": prd_jupyter.get_app_service_port(),
+                    "name": prd_jupyter_user1.get_app_service_name(),
+                    "port": prd_jupyter_user1.get_app_service_port(),
                 }
             ],
         }
@@ -95,7 +97,6 @@ traefik_name = "traefik"
 traefik_ingress_route = IngressRoute(
     replicas=3,
     name=traefik_name,
-    enabled=traefik_enabled,
     web_enabled=True,
     web_routes=routes,
     # Use ACM certificate to enable HTTPS
@@ -132,4 +133,8 @@ traefik_ingress_route = IngressRoute(
     topology_spread_when_unsatisfiable=topology_spread_when_unsatisfiable,
 )
 
-prd_traefik_apps = [traefik_ingress_route]
+prd_traefik_apps = AppGroup(
+    name="traefik",
+    enabled=traefik_enabled,
+    apps=[traefik_ingress_route],
+)
