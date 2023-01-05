@@ -114,7 +114,7 @@ prd_worker_eks_nodegroup = EksNodeGroup(
 )
 
 # -*- ACM certificate for domain
-prd_aws_dp_certificate = AcmCertificate(
+prd_acm_certificate = AcmCertificate(
     name=prd_domain,
     domain_name=prd_domain,
     subject_alternative_names=[f"*.{prd_domain}"],
@@ -132,5 +132,5 @@ prd_aws_resources = AwsResourceGroup(
     # Uncomment to create a VPC cloudformation stack
     # cloudformation_stacks=[prd_vpc_stack],
     # Uncomment to create an ACM certificate for domain
-    # acm_certificates=[prd_aws_dp_certificate],
+    acm_certificates=[prd_acm_certificate],
 )

@@ -6,6 +6,7 @@ from phidata.app.superset import (
     SupersetWebserver,
     SupersetWorker,
     SupersetWorkerBeat,
+    ImagePullPolicy,
 )
 from phidata.app.group import AppGroup
 from phidata.app.postgres import PostgresDb, PostgresVolumeType
@@ -83,6 +84,7 @@ prd_superset_ws = SupersetWebserver(
     git_sync_branch=git_sync_branch,
     env_file=prd_superset_env_file,
     secrets_file=prd_superset_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=services_ng_label,
     topology_spread_key=topology_spread_key,
@@ -106,6 +108,7 @@ prd_superset_init = SupersetInit(
     git_sync_branch=git_sync_branch,
     env_file=prd_superset_env_file,
     secrets_file=prd_superset_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=workers_ng_label,
     topology_spread_key=topology_spread_key,
@@ -128,6 +131,7 @@ prd_superset_worker = SupersetWorker(
     git_sync_branch=git_sync_branch,
     env_file=prd_superset_env_file,
     secrets_file=prd_superset_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=workers_ng_label,
     topology_spread_key=topology_spread_key,
@@ -150,6 +154,7 @@ prd_superset_worker_beat = SupersetWorkerBeat(
     git_sync_branch=git_sync_branch,
     env_file=prd_superset_env_file,
     secrets_file=prd_superset_secrets_file,
+    image_pull_policy=ImagePullPolicy.ALWAYS,
     use_cache=use_cache,
     pod_node_selector=workers_ng_label,
     topology_spread_key=topology_spread_key,

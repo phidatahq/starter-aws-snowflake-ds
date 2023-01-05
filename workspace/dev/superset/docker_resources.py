@@ -38,7 +38,7 @@ wait_for_db: bool = True
 wait_for_redis: bool = True
 # Mount the resources dir using a docker volume
 mount_resources: bool = True
-dev_superset_resources: str = "workspace/dev/superset_resources"
+dev_superset_resources: str = "workspace/dev/superset/resources"
 # Read env variables from env/dev_superset_env.yml
 dev_superset_env_file: Path = ws_dir_path.joinpath("env/dev_superset_env.yml")
 # Read secrets from secrets/dev_superset_secrets.yml

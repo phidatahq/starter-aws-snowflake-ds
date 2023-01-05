@@ -2,7 +2,7 @@ from phidata.app.group import AppGroup
 from phidata.app.traefik import IngressRoute, ServiceType
 
 from workspace.prd.aws_resources import (
-    prd_aws_dp_certificate,
+    prd_acm_certificate,
     services_ng_label,
     topology_spread_key,
     topology_spread_max_skew,
@@ -16,6 +16,7 @@ from workspace.settings import (
     airflow_enabled,
     jupyter_enabled,
     prd_domain,
+    private_subnets,
     superset_enabled,
     traefik_enabled,
     use_cache,
@@ -100,11 +101,11 @@ traefik_ingress_route = IngressRoute(
     web_enabled=True,
     web_routes=routes,
     # Use ACM certificate to enable HTTPS
-    # websecure_enabled=True,
-    # websecure_routes=routes,
-    # forward_web_to_websecure=True,
+    websecure_enabled=True,
+    websecure_routes=routes,
+    forward_web_to_websecure=True,
     # Read ACM certificate from a summary file and add the certificate ARN to the service_annotations
-    # acm_certificate_summary_file=prd_aws_dp_certificate.certificate_summary_file,
+    acm_certificate_summary_file=prd_acm_certificate.certificate_summary_file,
     # Use a LoadBalancer service
     service_type=ServiceType.LOAD_BALANCER,
     # Configure the LoadBalancer using annotations:
@@ -116,6 +117,9 @@ traefik_ingress_route = IngressRoute(
         # To make the load balancer internal. Set internal = "true"
         # reference: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
         "service.beta.kubernetes.io/aws-load-balancer-internal": "true",
+        "service.beta.kubernetes.io/aws-load-balancer-subnets": ", ".join(
+            private_subnets
+        ),
         # Other annotations: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/service/annotations/#annotations
     },
     # Enable traefik dashboard
