@@ -42,6 +42,6 @@ traefik_container = DockerContainer(
 
 dev_traefik_resources = DockerResourceGroup(
     name="traefik",
-    enabled=traefik_enabled,
+    enabled=False,
     containers=[traefik_container],
 )

@@ -22,6 +22,6 @@ dev_pg_db_airflow_connections = {
 
 dev_pg_db_apps = AppGroup(
     name="pg-db",
-    enabled=pg_dbs_enabled,
+    enabled=False,
     apps=[dev_pg_db],
 )

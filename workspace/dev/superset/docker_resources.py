@@ -92,7 +92,7 @@ dev_superset_init = SupersetInit(
 
 dev_superset_apps = AppGroup(
     name="superset",
-    enabled=superset_enabled,
+    enabled=False,
     apps=[
         dev_superset_db,
         dev_superset_redis,

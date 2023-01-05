@@ -69,5 +69,5 @@ dev_superset_image = DockerImage(
     use_cache=use_cache,
 )
 
-if superset_enabled:
-    dev_images.append(dev_superset_image)
+# if superset_enabled:
+#     dev_images.append(dev_superset_image)
